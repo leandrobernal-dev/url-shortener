@@ -1,3 +1,3 @@
-export default function App({ children }) {
+export default function AppLayout({ children }) {
     return <div>{children}</div>;
 }

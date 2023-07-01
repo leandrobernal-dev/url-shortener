@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { CssVarsProvider, useColorScheme } from "@mui/joy/styles";
+import { CssVarsProvider } from "@mui/joy/styles";
 import CssBaseline from "@mui/joy/CssBaseline";
 import AspectRatio from "@mui/joy/AspectRatio";
 import Avatar from "@mui/joy/Avatar";
@@ -24,8 +24,6 @@ import ListItemContent from "@mui/joy/ListItemContent";
 
 // Icons import
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
-import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import GridViewRoundedIcon from "@mui/icons-material/GridViewRounded";
 import FindInPageRoundedIcon from "@mui/icons-material/FindInPageRounded";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -41,7 +39,7 @@ import Layout from "@/components/Layout";
 import Navigation from "@/components/Navigation";
 import { ColorSchemeToggle } from "@/theme/theme";
 
-export default function FilesExample() {
+export default function App() {
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     return (
         <CssVarsProvider disableTransitionOnChange theme={theme}>

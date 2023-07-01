@@ -2,25 +2,27 @@
 
 import * as React from "react";
 import { CssVarsProvider } from "@mui/joy/styles";
-import CssBaseline from "@mui/joy/CssBaseline";
-import AspectRatio from "@mui/joy/AspectRatio";
-import Avatar from "@mui/joy/Avatar";
-import AvatarGroup from "@mui/joy/AvatarGroup";
-import Box from "@mui/joy/Box";
-import Button from "@mui/joy/Button";
-import Card from "@mui/joy/Card";
-import CardOverflow from "@mui/joy/CardOverflow";
-import CardCover from "@mui/joy/CardCover";
-import CardContent from "@mui/joy/CardContent";
-import Typography from "@mui/joy/Typography";
-import Input from "@mui/joy/Input";
-import IconButton from "@mui/joy/IconButton";
-import Divider from "@mui/joy/Divider";
-import Sheet from "@mui/joy/Sheet";
-import List from "@mui/joy/List";
-import ListItem from "@mui/joy/ListItem";
-import ListItemButton from "@mui/joy/ListItemButton";
-import ListItemContent from "@mui/joy/ListItemContent";
+import {
+    CssBaseline,
+    AspectRatio,
+    Avatar,
+    AvatarGroup,
+    Box,
+    Button,
+    Card,
+    CardOverflow,
+    CardCover,
+    CardContent,
+    Typography,
+    Input,
+    IconButton,
+    Divider,
+    Sheet,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemContent,
+} from "@mui/joy";
 
 // Icons import
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";

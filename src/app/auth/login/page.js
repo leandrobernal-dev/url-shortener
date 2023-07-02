@@ -16,11 +16,28 @@ import customTheme from "@/theme/theme";
 import { Google } from "@mui/icons-material";
 
 import { ColorSchemeToggle } from "@/theme/theme";
+import { signIn } from "next-auth/react";
 
 /**
  * This template uses [`Inter`](https://fonts.google.com/specimen/Inter?query=inter) font.
  */
 export default function LoginPage() {
+    const handleLogin = async (event) => {
+        event.preventDefault();
+        const formElements = event.currentTarget.elements;
+        const data = {
+            email: formElements.email.value,
+            password: formElements.password.value,
+            persistent: formElements.persistent.checked,
+        };
+        const result = await signIn("credentials", {
+            email: data.email,
+            password: data.password,
+            redirect: true,
+            callbackUrl: "/app",
+        });
+        console.log(result);
+    };
     return (
         <CssVarsProvider
             defaultMode="dark"
@@ -131,19 +148,7 @@ export default function LoginPage() {
                                 Welcome back
                             </Typography>
                         </div>
-                        <form
-                            onSubmit={(event) => {
-                                event.preventDefault();
-                                const formElements =
-                                    event.currentTarget.elements;
-                                const data = {
-                                    email: formElements.email.value,
-                                    password: formElements.password.value,
-                                    persistent: formElements.persistent.checked,
-                                };
-                                alert(JSON.stringify(data, null, 2));
-                            }}
-                        >
+                        <form onSubmit={handleLogin}>
                             <FormControl required>
                                 <FormLabel>Email</FormLabel>
                                 <Input type="email" name="email" />

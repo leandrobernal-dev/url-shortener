@@ -62,6 +62,7 @@ function Menu({ control, menus, id }) {
                 onClose={close}
                 anchorEl={buttonElement}
                 sx={{ minWidth: 120 }}
+                ref={buttonRef}
             >
                 {menus.map(({ label, active, ...item }) => {
                     const menuItem = (

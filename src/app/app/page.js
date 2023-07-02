@@ -44,8 +44,9 @@ import { ColorSchemeToggle } from "@/theme/theme";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 
-export default async function App() {
-    const { data: session, status } = useSession();
+export default function App() {
+    const { data: session, status } = useSession({ required: true });
+
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     return (
         <CssVarsProvider disableTransitionOnChange theme={theme}>
@@ -169,11 +170,13 @@ export default async function App() {
                             ]}
                         />
                         <ColorSchemeToggle />
-                        <Button onClick={() => signOut()}>
-                            <Typography>Logout</Typography>
-                        </Button>
                         {status === "authenticated" ? (
-                            <Typography>{session.user.email}</Typography>
+                            <>
+                                <Button onClick={() => signOut()}>
+                                    <Typography>Logout</Typography>
+                                </Button>
+                                <Typography>{session.user.email}</Typography>
+                            </>
                         ) : (
                             ""
                         )}

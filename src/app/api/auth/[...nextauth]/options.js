@@ -2,7 +2,11 @@ import GoogleProvider from "next-auth/providers/google";
 import GithubProvicer from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+import bcrypt from "bcrypt";
+
 import { NextAuthOptions } from "next-auth";
+
+import User from "@/models/userModel";
 
 export const options = {
     providers: [
@@ -36,29 +40,64 @@ export const options = {
                 },
             },
             async authorize(credentials) {
-                // retrieve user data here
-                // https://next-auth.js.org/configuration/providers/credentials
-                const user = {
-                    id: 24,
-                    email: "me@gmail.com",
-                    password: "123",
-                };
-                console.log(credentials);
+                const user = await User.findOne({ email: credentials.email });
+                if (!user) throw new Error("Email or Password is Incorrect!");
 
-                if (
-                    credentials.email === user.email &&
-                    credentials.password === user.password
-                ) {
-                    return user;
-                } else {
-                    return null;
-                }
+                const compare = await bcrypt.compare(
+                    credentials.password,
+                    user.password
+                );
+                if (!compare)
+                    throw new Error("Email or Password is Incorrect!");
+
+                return user;
             },
         }),
     ],
     secret: process.env.NEXTAUTH_SECRET,
     pages: {
         signIn: "/auth/login",
-        // newUser: "/auth/register",
+        newUser: "/auth/register",
+    },
+    callbacks: {
+        async signIn({ user, profile, account, email, credentials }) {
+            // console.log({ account, profile });
+            if (account.type === "oauth") {
+                return await signInWithOAuth({ account, profile });
+            }
+            return true;
+        },
+        async jwt({ token, trigger, session }) {
+            // console.log(token);
+            const user = await getUserByEmail({ email: token.email });
+            // console.log(user);
+            return token;
+        },
+        async session({ session, token }) {
+            return session;
+        },
     },
 };
+
+async function signInWithOAuth({ account, profile }) {
+    const user = await User.findOne({ email: profile.email });
+    // console.log({ user });
+    if (user) return true;
+
+    const newUser = new User({
+        email: profile.email,
+        name: profile.name,
+        provider: account.provider,
+    });
+    await newUser.save();
+    // console.log({ newUser });
+    return true;
+}
+
+async function getUserByEmail({ email }) {
+    const user = await User.findOne({ email: email });
+
+    if (!user) throw new Error("Email does not exist");
+
+    return { ...user._doc, _id: user._id.toString() };
+}

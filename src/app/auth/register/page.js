@@ -16,11 +16,55 @@ import customTheme from "@/theme/theme";
 import { Google } from "@mui/icons-material";
 
 import { ColorSchemeToggle } from "@/theme/theme";
+import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 /**
  * This template uses [`Inter`](https://fonts.google.com/specimen/Inter?query=inter) font.
  */
 export default function RegisterPage() {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+
+    const handleSignUp = async (event) => {
+        event.preventDefault();
+        const formElements = event.currentTarget.elements;
+
+        const response = await fetch("/api/auth/signup", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email: formElements.email.value,
+                password: formElements.password.value,
+            }),
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+            console.log(data);
+            await signIn("credentials", {
+                email: formElements.email.value,
+                password: formElements.password.value,
+                redirect: false,
+            })
+                .then(({ ok, error, status, url }) => {
+                    console.log(ok, error, status, url);
+                    if (ok) {
+                        console.log(error);
+                        router.push(searchParams.get("callbackUrl"));
+                    } else {
+                        console.log(error);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        } else {
+            console.log(data);
+        }
+    };
     return (
         <CssVarsProvider
             defaultMode="dark"
@@ -131,19 +175,7 @@ export default function RegisterPage() {
                                 Welcome back
                             </Typography>
                         </div>
-                        <form
-                            onSubmit={(event) => {
-                                event.preventDefault();
-                                const formElements =
-                                    event.currentTarget.elements;
-                                const data = {
-                                    email: formElements.email.value,
-                                    password: formElements.password.value,
-                                    persistent: formElements.persistent.checked,
-                                };
-                                alert(JSON.stringify(data, null, 2));
-                            }}
-                        >
+                        <form onSubmit={handleSignUp}>
                             <FormControl required>
                                 <FormLabel>Email</FormLabel>
                                 <Input type="email" name="email" />
@@ -168,7 +200,9 @@ export default function RegisterPage() {
                                     Already have an Account?{" "}
                                     <Link
                                         fontSize="sm"
-                                        href="/auth/login"
+                                        href={`/auth/login?callbackUrl=${encodeURIComponent(
+                                            searchParams.get("callbackUrl")
+                                        )}`}
                                         fontWeight="lg"
                                     >
                                         Sign-In.
@@ -176,7 +210,7 @@ export default function RegisterPage() {
                                 </Typography>
                             </Box>
                             <Button type="submit" fullWidth>
-                                Sign in
+                                Sign Up
                             </Button>
                         </form>
                         <Button
@@ -185,7 +219,7 @@ export default function RegisterPage() {
                             fullWidth
                             startDecorator={<Google />}
                         >
-                            Sign in with Google
+                            Sign up with Google
                         </Button>
                     </Box>
                     <Box component="footer" sx={{ py: 3 }}>

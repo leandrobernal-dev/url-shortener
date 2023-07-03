@@ -17,13 +17,14 @@ import { Google } from "@mui/icons-material";
 
 import { ColorSchemeToggle } from "@/theme/theme";
 import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 /**
  * This template uses [`Inter`](https://fonts.google.com/specimen/Inter?query=inter) font.
  */
 export default function LoginPage() {
     const searchParams = useSearchParams();
+    const router = useRouter();
     const [loginWithGoogleLoading, setLoginWithGoogleLoading] =
         React.useState(false);
 
@@ -43,9 +44,19 @@ export default function LoginPage() {
         await signIn("credentials", {
             email: data.email,
             password: data.password,
-            redirect: true,
-            callbackUrl: searchParams.get("callbackUrl"),
-        });
+            redirect: false,
+        })
+            .then(({ ok, error }) => {
+                if (ok) {
+                    console.log(error);
+                    router.push(searchParams.get("callbackUrl"));
+                } else {
+                    console.log(error);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
     return (
         <CssVarsProvider

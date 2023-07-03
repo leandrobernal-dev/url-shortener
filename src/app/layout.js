@@ -2,6 +2,8 @@ import AuthProvider from "@/context/AuthProvider";
 import "./globals.css";
 import { Inter } from "next/font/google";
 
+import dbConnect from "@/db/database";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -10,6 +12,8 @@ export const metadata = {
 };
 
 export default function RootLayout({ children, Session }) {
+    dbConnect();
+
     return (
         <html lang="en">
             <body className={inter.className}>

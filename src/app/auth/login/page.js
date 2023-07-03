@@ -180,7 +180,9 @@ export default function LoginPage() {
                                     Don't have an Account?{" "}
                                     <Link
                                         fontSize="sm"
-                                        href="/auth/register"
+                                        href={`/auth/register?callbackUrl=${encodeURIComponent(
+                                            searchParams.get("callbackUrl")
+                                        )}`}
                                         fontWeight="lg"
                                     >
                                         Sign-up.

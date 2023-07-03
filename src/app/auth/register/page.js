@@ -171,7 +171,7 @@ export default function RegisterPage() {
                                         href="/auth/login"
                                         fontWeight="lg"
                                     >
-                                        Sign-up.
+                                        Sign-In.
                                     </Link>
                                 </Typography>
                             </Box>

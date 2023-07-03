@@ -24,6 +24,8 @@ import { useSearchParams } from "next/navigation";
  */
 export default function LoginPage() {
     const searchParams = useSearchParams();
+    const [loginWithGoogleLoading, setLoginWithGoogleLoading] =
+        React.useState(false);
 
     const handleGoogleLogin = async (e) => {
         await signIn("google", {
@@ -198,7 +200,13 @@ export default function LoginPage() {
                             color="neutral"
                             fullWidth
                             startDecorator={<Google />}
-                            onClick={handleGoogleLogin}
+                            onClick={() => {
+                                setLoginWithGoogleLoading(
+                                    (prevstate) => !prevstate
+                                );
+                                handleGoogleLogin();
+                            }}
+                            loading={loginWithGoogleLoading}
                         >
                             Sign in with Google
                         </Button>

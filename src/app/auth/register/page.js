@@ -169,10 +169,7 @@ export default function RegisterPage() {
                                 fontSize="xl2"
                                 fontWeight="lg"
                             >
-                                Sign in to your account
-                            </Typography>
-                            <Typography level="body2" sx={{ my: 1, mb: 3 }}>
-                                Welcome back
+                                Create a New Account
                             </Typography>
                         </div>
                         <form onSubmit={handleSignUp}>
@@ -187,15 +184,10 @@ export default function RegisterPage() {
                             <Box
                                 sx={{
                                     display: "flex",
-                                    justifyContent: "space-between",
+                                    justifyContent: "end",
                                     alignItems: "center",
                                 }}
                             >
-                                <Checkbox
-                                    size="sm"
-                                    label="Remember for 30 days"
-                                    name="persistent"
-                                />
                                 <Typography level="body3" textAlign="center">
                                     Already have an Account?{" "}
                                     <Link
@@ -209,7 +201,7 @@ export default function RegisterPage() {
                                     </Link>
                                 </Typography>
                             </Box>
-                            <Button type="submit" fullWidth>
+                            <Button variant="outlined" type="submit" fullWidth>
                                 Sign Up
                             </Button>
                         </form>

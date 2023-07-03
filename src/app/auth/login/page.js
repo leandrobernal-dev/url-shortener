@@ -202,7 +202,7 @@ export default function LoginPage() {
                                     </Link>
                                 </Typography>
                             </Box>
-                            <Button type="submit" fullWidth>
+                            <Button variant="outlined" type="submit" fullWidth>
                                 Sign in
                             </Button>
                         </form>

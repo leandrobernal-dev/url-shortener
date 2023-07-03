@@ -17,11 +17,19 @@ import { Google } from "@mui/icons-material";
 
 import { ColorSchemeToggle } from "@/theme/theme";
 import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 
 /**
  * This template uses [`Inter`](https://fonts.google.com/specimen/Inter?query=inter) font.
  */
 export default function LoginPage() {
+    const searchParams = useSearchParams();
+
+    const handleGoogleLogin = async (e) => {
+        await signIn("google", {
+            callbackUrl: searchParams.get("callbackUrl"),
+        });
+    };
     const handleLogin = async (event) => {
         event.preventDefault();
         const formElements = event.currentTarget.elements;
@@ -30,13 +38,12 @@ export default function LoginPage() {
             password: formElements.password.value,
             persistent: formElements.persistent.checked,
         };
-        const result = await signIn("credentials", {
+        await signIn("credentials", {
             email: data.email,
             password: data.password,
             redirect: true,
-            callbackUrl: "/app",
+            callbackUrl: searchParams.get("callbackUrl"),
         });
-        console.log(result);
     };
     return (
         <CssVarsProvider
@@ -189,6 +196,7 @@ export default function LoginPage() {
                             color="neutral"
                             fullWidth
                             startDecorator={<Google />}
+                            onClick={handleGoogleLogin}
                         >
                             Sign in with Google
                         </Button>

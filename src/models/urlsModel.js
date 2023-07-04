@@ -23,6 +23,7 @@ const UrlSchema = new Schema(
         },
         description: {
             type: String,
+            required: false,
         },
     },
     { timestamps: true }

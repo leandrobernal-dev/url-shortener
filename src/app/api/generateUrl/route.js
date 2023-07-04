@@ -5,7 +5,7 @@ import Url from "@/models/urlsModel";
 import User from "@/models/userModel";
 
 export async function POST(request) {
-    const { email } = await request.json();
+    const { email, name, description, url } = await request.json();
 
     try {
         const user = await User.findOne({ email });
@@ -15,10 +15,12 @@ export async function POST(request) {
         const urlId = shortid.generate(); // Generate a unique URL
         const newUrl = new Url({
             user: userId,
-            caption: caption,
-            images: images,
-            url: urlId, // Assign the generated URL
+            name: name,
+            url: url,
+            shortenedUrl: urlId,
+            description: description,
         });
+        await newUrl.save();
         console.log("Url created:", newUrl);
         return NextResponse.json({ msg: "Url Generated Successfully", newUrl });
     } catch (error) {

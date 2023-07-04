@@ -36,9 +36,9 @@ import BookRoundedIcon from "@mui/icons-material/BookRounded";
 
 // custom
 import theme from "@/theme/theme";
-import Menu from "@/components/Menu";
-import Layout from "@/components/Layout";
-import Navigation from "@/components/Navigation";
+import Menu from "@/layout/Menu";
+import Layout from "@/layout/Layout";
+import Navigation from "@/layout/Navigation";
 import { ColorSchemeToggle } from "@/theme/theme";
 
 import { signOut } from "next-auth/react";

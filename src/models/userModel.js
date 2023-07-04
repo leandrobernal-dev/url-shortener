@@ -1,4 +1,6 @@
-import { Schema, model, models } from "mongoose";
+import mongoose, { Schema, model, models } from "mongoose";
+
+const userDb = mongoose.connection.useDb("users");
 
 const userSchema = new Schema(
     {
@@ -9,6 +11,7 @@ const userSchema = new Schema(
         email: {
             type: String,
             required: true,
+            unique: [true, "Email Already Exist!"],
         },
         password: String,
         provider: {
@@ -19,6 +22,6 @@ const userSchema = new Schema(
     { timestamps: true }
 );
 
-const User = models.user || model("user", userSchema);
+const User = models.users || userDb.model("users", userSchema);
 
 export default User;

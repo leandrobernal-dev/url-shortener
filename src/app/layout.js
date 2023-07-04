@@ -16,7 +16,7 @@ export default function RootLayout({ children, Session }) {
 
     return (
         <html lang="en">
-            <body className={inter.className}>
+            <body className={inter.className} suppressHydrationWarning={true}>
                 <AuthProvider session={Session}>{children} </AuthProvider>
             </body>
         </html>

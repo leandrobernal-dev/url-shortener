@@ -171,11 +171,19 @@ export default function LoginPage() {
                         <form onSubmit={handleLogin}>
                             <FormControl required>
                                 <FormLabel>Email</FormLabel>
-                                <Input type="email" name="email" />
+                                <Input
+                                    placeholder="your@email.com"
+                                    type="email"
+                                    name="email"
+                                />
                             </FormControl>
                             <FormControl required>
                                 <FormLabel>Password</FormLabel>
-                                <Input type="password" name="password" />
+                                <Input
+                                    placeholder="********"
+                                    type="password"
+                                    name="password"
+                                />
                             </FormControl>
                             <Box
                                 sx={{

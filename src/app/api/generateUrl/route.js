@@ -1,26 +1,33 @@
 import { NextResponse } from "next/server";
 
 import shortid from "shortid";
-import Url from "@/models/urlsModel";
-import User from "@/models/userModel";
+import Url from "@/models/Url";
+import User from "@/models/User";
+import { getServerSession } from "next-auth";
 
 export async function POST(request) {
-    const { email, name, description, url } = await request.json();
+    const { name, description, url } = await request.json();
+    const session = await getServerSession();
+
+    if (!session) {
+        throw new Error("Please login to your account!");
+    }
+    const email = session.user.email;
 
     try {
         const user = await User.findOne({ email });
         if (!user) return NextResponse.json({ msg: "User not Found" });
 
-        const userId = user._id;
         const urlId = shortid.generate(); // Generate a unique URL
         const newUrl = new Url({
-            user: userId,
+            user: user._id,
             name: name,
             url: url,
             shortenedUrl: urlId,
             description: description,
         });
         await newUrl.save();
+
         console.log("Url created:", newUrl);
         return NextResponse.json({ msg: "Url Generated Successfully", newUrl });
     } catch (error) {

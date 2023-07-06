@@ -5,7 +5,6 @@ import Url from "@/models/Url";
 import User from "@/models/User";
 import { getServerSession } from "next-auth";
 import Clicks from "@/models/Clicks";
-
 export async function GET(request) {
     const { user } = await getServerSession();
 
@@ -56,6 +55,40 @@ export async function POST(request) {
         console.error("Error creating post:", error);
         return NextResponse.json(
             { msg: "Internal Server Error" },
+            { status: 500 }
+        );
+    }
+}
+
+export async function DELETE(request) {
+    // const { urlId } = await request.json();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id").toString();
+    if (!id) {
+        return NextResponse.json(
+            {
+                msg: "Please Provide a valid URL id",
+            },
+            { status: 400 }
+        );
+    }
+
+    const url = Url.findOne({ _id: id });
+
+    if (!url) {
+        return NextResponse.json({ msg: "Url not Found!" }, { status: 404 });
+    }
+
+    try {
+        await url.deleteOne();
+        return NextResponse.json({ msg: "success" });
+    } catch (error) {
+        console.log(error);
+        return NextResponse.json(
+            {
+                msg: "Internal Server Error",
+                error,
+            },
             { status: 500 }
         );
     }

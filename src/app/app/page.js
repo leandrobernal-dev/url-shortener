@@ -48,22 +48,21 @@ export default function App() {
     const [loadingData, setLoadingData] = React.useState(true);
     const [newUrlLoadingButton, setNewUrlLoadingButton] = React.useState(false);
 
-    React.useEffect(() => {
-        async function getUrls() {
-            const res = await fetch("/api/getUrls");
-            const data = await res.json();
+    async function getUrls() {
+        const res = await fetch("/api/urls");
+        const data = await res.json();
 
-            if (res.ok) {
-                console.log(data);
-                setUserUrls(() => {
-                    setLoadingData(() => false);
-                    return data.urls;
-                });
-            } else {
-                console.log(data);
-            }
+        if (res.ok) {
+            console.log(data);
+            setUserUrls(() => {
+                setLoadingData(() => false);
+                return data.urls;
+            });
+        } else {
+            console.log(data);
         }
-
+    }
+    React.useEffect(() => {
         getUrls();
     }, []);
 
@@ -71,15 +70,37 @@ export default function App() {
         return (
             <UrlCard
                 key={url._id}
+                urlId={url._id}
                 name={url.name}
                 url={`http://localhost:3000/${url.shortenedUrl}`}
                 description={url.description}
                 createdAt={url.createdAt}
                 clicks={url.clicks}
                 urlRedirect={url.url}
+                deleteFunction={handleDeleteUrl}
             />
         );
     });
+
+    async function handleDeleteUrl(e) {
+        const id = e.target.parentNode.getAttribute("url-id");
+
+        const response = await fetch("/api/urls?id=" + id, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            await getUrls();
+            console.log(data);
+        } else {
+            console.log(response);
+        }
+    }
 
     async function handleCreateNewUrl(e) {
         setNewUrlLoadingButton((prevState) => !prevState);
@@ -89,7 +110,7 @@ export default function App() {
         const url = formElements.url.value;
         const description = formElements.description.value;
 
-        const response = await fetch("/api/generateUrl", {
+        const response = await fetch("/api/urls", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -101,9 +122,8 @@ export default function App() {
             }),
         });
 
-        const data = await response.json();
-
         if (response.ok) {
+            const data = await response.json();
             console.log(data);
             setUserUrls((prevState) => {
                 setNewUrlLoadingButton((prevState) => !prevState);
@@ -112,7 +132,6 @@ export default function App() {
             });
         } else {
             console.log(response);
-            console.log(data);
         }
     }
 

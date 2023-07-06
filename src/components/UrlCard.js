@@ -16,6 +16,8 @@ export default function UrlCard({
     createdAt,
     clicks,
     urlRedirect,
+    deleteFunction,
+    urlId,
 }) {
     return (
         <Card variant="outlined" sx={{ width: 320 }}>
@@ -31,7 +33,9 @@ export default function UrlCard({
                 <Typography level="body2">
                     {new Date(createdAt).toLocaleString()}
                 </Typography>
-                <IconButton
+
+                <Button
+                    url-id={urlId}
                     aria-label="bookmark Bahamas Islands"
                     variant="plain"
                     color="danger"
@@ -41,9 +45,10 @@ export default function UrlCard({
                         top: "0.5rem",
                         right: "0.5rem",
                     }}
+                    onClick={deleteFunction}
                 >
                     <DeleteForeverIcon />
-                </IconButton>
+                </Button>
             </div>
             <AspectRatio minHeight="120px" maxHeight="200px">
                 <img

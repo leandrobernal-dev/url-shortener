@@ -26,6 +26,10 @@ export const UrlSchema = new Schema(
             type: String,
             required: false,
         },
+        folder: {
+            type: Schema.Types.ObjectId,
+            ref: "Folder",
+        },
     },
     {
         timestamps: true,

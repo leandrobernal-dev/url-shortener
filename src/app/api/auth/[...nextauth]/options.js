@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 
 import { NextAuthOptions } from "next-auth";
 
-import User from "@/models/userModel";
+import User from "@/models/User";
 
 export const options = {
     providers: [
@@ -40,7 +40,9 @@ export const options = {
                 },
             },
             async authorize(credentials) {
-                const user = await User.findOne({ email: credentials.email });
+                const user = await User.findOne({
+                    email: credentials.email,
+                }).populate("urls");
                 if (!user) throw new Error("Email or Password is Incorrect!");
 
                 const compare = await bcrypt.compare(

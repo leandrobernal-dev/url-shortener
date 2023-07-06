@@ -84,9 +84,7 @@ export default function App() {
                 urlRedirect={url.url}
                 deleteFunction={(e) => {
                     setDeleteUrlModalOpen((prevState) => {
-                        setDeleteUrlId(() =>
-                            e.target.parentNode.getAttribute("url-id")
-                        );
+                        setDeleteUrlId(() => url._id);
                         return !prevState;
                     });
                 }}

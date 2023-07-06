@@ -39,14 +39,19 @@ import { useSession } from "next-auth/react";
 import { Add } from "@mui/icons-material";
 import NewUrlModalForm from "@/components/NewUrlModal";
 import UrlCard from "@/components/UrlCard";
+import DeleteUrlModal from "@/components/DeleteUrlModal";
 
 export default function App() {
     const { data: session, status } = useSession({ required: true });
     const [userUrls, setUserUrls] = React.useState([]);
 
     const [newUrlModalFormOpen, setNewUrlModalFormOpen] = React.useState(false);
+    const [deleteUrlModalOpen, setDeleteUrlModalOpen] = React.useState(false);
+
     const [loadingData, setLoadingData] = React.useState(true);
     const [newUrlLoadingButton, setNewUrlLoadingButton] = React.useState(false);
+
+    const [deleteUrlId, setDeleteUrlId] = React.useState(null);
 
     async function getUrls() {
         const res = await fetch("/api/urls");
@@ -77,14 +82,19 @@ export default function App() {
                 createdAt={url.createdAt}
                 clicks={url.clicks}
                 urlRedirect={url.url}
-                deleteFunction={handleDeleteUrl}
+                deleteFunction={(e) => {
+                    setDeleteUrlModalOpen((prevState) => {
+                        setDeleteUrlId(() =>
+                            e.target.parentNode.getAttribute("url-id")
+                        );
+                        return !prevState;
+                    });
+                }}
             />
         );
     });
 
-    async function handleDeleteUrl(e) {
-        const id = e.target.parentNode.getAttribute("url-id");
-
+    async function handleDeleteUrl(id) {
         const response = await fetch("/api/urls?id=" + id, {
             method: "DELETE",
             headers: {
@@ -289,6 +299,11 @@ export default function App() {
                 </Layout.SideNav>
 
                 <Layout.Main>
+                    <DeleteUrlModal
+                        open={deleteUrlModalOpen}
+                        setOpen={setDeleteUrlModalOpen}
+                        deleteFunction={() => handleDeleteUrl(deleteUrlId)}
+                    />
                     <NewUrlModalForm
                         handleSubmit={handleCreateNewUrl}
                         open={newUrlModalFormOpen}

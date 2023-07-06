@@ -9,7 +9,12 @@ import {
     Input,
 } from "@mui/joy";
 
-export default function NewUrlModalForm({ open, setOpen, handleSubmit }) {
+export default function NewUrlModalForm({
+    open,
+    setOpen,
+    handleSubmit,
+    loading,
+}) {
     return (
         <Modal open={open} onClose={() => setOpen((prevState) => !prevState)}>
             <ModalDialog
@@ -41,7 +46,11 @@ export default function NewUrlModalForm({ open, setOpen, handleSubmit }) {
                             <Input name="description" required />
                         </FormControl>
 
-                        <Button variant="outlined" type="submit">
+                        <Button
+                            loading={loading}
+                            variant="outlined"
+                            type="submit"
+                        >
                             Submit
                         </Button>
                     </Stack>

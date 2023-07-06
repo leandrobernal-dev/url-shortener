@@ -44,8 +44,9 @@ export default function App() {
     const { data: session, status } = useSession({ required: true });
     const [userUrls, setUserUrls] = React.useState([]);
 
-    const [newUrlModalFormOpen, setNewUrlModalForm] = React.useState(false);
+    const [newUrlModalFormOpen, setNewUrlModalFormOpen] = React.useState(false);
     const [loadingData, setLoadingData] = React.useState(true);
+    const [newUrlLoadingButton, setNewUrlLoadingButton] = React.useState(false);
 
     React.useEffect(() => {
         async function getUrls() {
@@ -81,6 +82,7 @@ export default function App() {
     });
 
     async function handleCreateNewUrl(e) {
+        setNewUrlLoadingButton((prevState) => !prevState);
         e.preventDefault();
         const formElements = e.currentTarget.elements;
         const name = formElements.name.value;
@@ -104,6 +106,8 @@ export default function App() {
         if (response.ok) {
             console.log(data);
             setUserUrls((prevState) => {
+                setNewUrlLoadingButton((prevState) => !prevState);
+                setNewUrlModalFormOpen((prevState) => !prevState);
                 return [...prevState, data.newUrl];
             });
         } else {
@@ -247,7 +251,7 @@ export default function App() {
                                     color="neutral"
                                     startDecorator={<Add />}
                                     onClick={() =>
-                                        setNewUrlModalForm(
+                                        setNewUrlModalFormOpen(
                                             (prevState) => !prevState
                                         )
                                     }
@@ -269,7 +273,8 @@ export default function App() {
                     <NewUrlModalForm
                         handleSubmit={handleCreateNewUrl}
                         open={newUrlModalFormOpen}
-                        setOpen={setNewUrlModalForm}
+                        setOpen={setNewUrlModalFormOpen}
+                        loading={newUrlLoadingButton}
                     />
                     {loadingData ? <LinearProgress /> : urlsElement}
                 </Layout.Main>

@@ -73,13 +73,14 @@ export async function DELETE(request) {
         );
     }
 
-    const url = Url.findOne({ _id: id });
+    const url = await Url.findOne({ _id: id });
 
     if (!url) {
         return NextResponse.json({ msg: "Url not Found!" }, { status: 404 });
     }
 
     try {
+        await Clicks.deleteMany({ url });
         await url.deleteOne();
         return NextResponse.json({ msg: "success" });
     } catch (error) {

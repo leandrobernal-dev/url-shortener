@@ -14,6 +14,8 @@ import {
     IconButton,
     Divider,
     Sheet,
+    CircularProgress,
+    LinearProgress,
 } from "@mui/joy";
 
 // Icons import
@@ -35,11 +37,48 @@ import { ColorSchemeToggle } from "@/theme/theme";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { Add } from "@mui/icons-material";
-import NewUrlModalForm from "@/components/newUrlModal";
+import NewUrlModalForm from "@/components/NewUrlModal";
+import UrlCard from "@/components/UrlCard";
 
 export default function App() {
     const { data: session, status } = useSession({ required: true });
+    const [userUrls, setUserUrls] = React.useState([]);
+
     const [newUrlModalFormOpen, setNewUrlModalForm] = React.useState(false);
+    const [loadingData, setLoadingData] = React.useState(true);
+
+    React.useEffect(() => {
+        async function getUrls() {
+            const res = await fetch("/api/getUrls");
+            const data = await res.json();
+
+            if (res.ok) {
+                console.log(data);
+                setUserUrls(() => {
+                    setLoadingData(() => false);
+                    return data.urls;
+                });
+            } else {
+                console.log(data);
+            }
+        }
+
+        getUrls();
+    }, []);
+
+    const urlsElement = userUrls.map((url) => {
+        return (
+            <UrlCard
+                key={url._id}
+                name={url.name}
+                url={`http://localhost:3000/${url.shortenedUrl}`}
+                description={url.description}
+                createdAt={url.createdAt}
+                clicks={url.clicks}
+                urlRedirect={url.url}
+            />
+        );
+    });
 
     async function handleCreateNewUrl(e) {
         e.preventDefault();
@@ -54,19 +93,19 @@ export default function App() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                email: session.user.email,
                 name,
                 description,
                 url,
             }),
-            // body: JSON.stringify({ email: session.user.email }),
         });
 
         const data = await response.json();
 
         if (response.ok) {
-            console.log(response);
             console.log(data);
+            setUserUrls((prevState) => {
+                return [...prevState, data.newUrl];
+            });
         } else {
             console.log(response);
             console.log(data);
@@ -202,7 +241,19 @@ export default function App() {
                                 <Button onClick={() => signOut()}>
                                     <Typography>Logout</Typography>
                                 </Button>
-                                <Typography>{session.user.email}</Typography>
+                                {/* <Typography>{session.user.email}</Typography> */}
+                                <Button
+                                    variant="outlined"
+                                    color="neutral"
+                                    startDecorator={<Add />}
+                                    onClick={() =>
+                                        setNewUrlModalForm(
+                                            (prevState) => !prevState
+                                        )
+                                    }
+                                >
+                                    Create New
+                                </Button>
                             </>
                         ) : (
                             ""
@@ -220,16 +271,7 @@ export default function App() {
                         open={newUrlModalFormOpen}
                         setOpen={setNewUrlModalForm}
                     />
-                    <Button
-                        variant="outlined"
-                        color="neutral"
-                        startDecorator={<Add />}
-                        onClick={() =>
-                            setNewUrlModalForm((prevState) => !prevState)
-                        }
-                    >
-                        New project
-                    </Button>
+                    {loadingData ? <LinearProgress /> : urlsElement}
                 </Layout.Main>
 
                 <Sheet

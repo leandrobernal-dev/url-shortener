@@ -5,6 +5,11 @@ const foldersDb = mongoose.connection.useDb("Folders");
 
 const FolderSchema = new Schema(
     {
+        user: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
         name: {
             type: String,
             required: false,
@@ -14,7 +19,11 @@ const FolderSchema = new Schema(
             required: false,
         },
     },
-    { timestamps: true }
+    {
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+    }
 );
 
 FolderSchema.virtual("urls", {

@@ -35,7 +35,7 @@ import DeleteUrlModal from "@/components/DeleteUrlModal";
 
 export default function App() {
     const { data: session, status } = useSession({ required: true });
-    const [userUrls, setUserUrls] = React.useState([]);
+    const [userData, setUserData] = React.useState([]);
 
     const [newUrlModalFormOpen, setNewUrlModalFormOpen] = React.useState(false);
     const [deleteUrlModalOpen, setDeleteUrlModalOpen] = React.useState(false);
@@ -51,9 +51,9 @@ export default function App() {
 
         if (res.ok) {
             console.log(data);
-            setUserUrls(() => {
+            setUserData(() => {
                 setLoadingData(() => false);
-                return data.urls;
+                return data.data;
             });
         } else {
             console.log(data);
@@ -62,27 +62,6 @@ export default function App() {
     React.useEffect(() => {
         getUrls();
     }, []);
-
-    const urlsElement = userUrls.map((url) => {
-        return (
-            <UrlCard
-                key={url._id}
-                urlId={url._id}
-                name={url.name}
-                url={`http://localhost:3000/${url.shortenedUrl}`}
-                description={url.description}
-                createdAt={url.createdAt}
-                clicks={url.clicks}
-                urlRedirect={url.url}
-                deleteFunction={(e) => {
-                    setDeleteUrlModalOpen((prevState) => {
-                        setDeleteUrlId(() => url._id);
-                        return !prevState;
-                    });
-                }}
-            />
-        );
-    });
 
     async function handleDeleteUrl(id) {
         const response = await fetch("/api/urls?id=" + id, {
@@ -125,11 +104,8 @@ export default function App() {
         if (response.ok) {
             const data = await response.json();
             console.log(data);
-            setUserUrls((prevState) => {
-                setNewUrlLoadingButton((prevState) => !prevState);
-                setNewUrlModalFormOpen((prevState) => !prevState);
-                return [...prevState, data.newUrl];
-            });
+            setNewUrlLoadingButton((prevState) => !prevState);
+            setNewUrlModalFormOpen((prevState) => !prevState);
         } else {
             console.log(response);
         }
@@ -275,7 +251,7 @@ export default function App() {
                                         )
                                     }
                                 >
-                                    Create New
+                                    New
                                 </Button>
                             </>
                         ) : (
@@ -285,7 +261,10 @@ export default function App() {
                 </Layout.Header>
 
                 <Layout.SideNav>
-                    <Navigation urls={userUrls} />
+                    <Navigation
+                        data={userData}
+                        setNewUrlModalFormOpen={setNewUrlModalFormOpen}
+                    />
                 </Layout.SideNav>
 
                 <Layout.Main>
@@ -300,7 +279,16 @@ export default function App() {
                         setOpen={setNewUrlModalFormOpen}
                         loading={newUrlLoadingButton}
                     />
-                    {loadingData ? <LinearProgress /> : urlsElement}
+                    {loadingData ? (
+                        <LinearProgress />
+                    ) : (
+                        <div
+                            style={{ height: "100%" }}
+                            className="w-100 h-100 flex items-center justify-center"
+                        >
+                            Select Url to View Details
+                        </div>
+                    )}
                 </Layout.Main>
             </Layout.Root>
         </CssVarsProvider>

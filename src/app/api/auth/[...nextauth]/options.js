@@ -7,6 +7,7 @@ import bcrypt from "bcrypt";
 import { NextAuthOptions } from "next-auth";
 
 import User from "@/models/User";
+import dbConnect from "@/db/database";
 
 export const options = {
     providers: [
@@ -40,6 +41,7 @@ export const options = {
                 },
             },
             async authorize(credentials) {
+                await dbConnect();
                 const user = await User.findOne({
                     email: credentials.email,
                 }).populate("urls");
@@ -65,6 +67,7 @@ export const options = {
         async signIn({ user, profile, account, email, credentials }) {
             // console.log({ account, profile });
             if (account.type === "oauth") {
+                await dbConnect();
                 return await signInWithOAuth({ account, profile });
             }
             return true;

@@ -5,6 +5,8 @@ import Url from "@/models/Url";
 import User from "@/models/User";
 import { getServerSession } from "next-auth";
 import Clicks from "@/models/Clicks";
+import Folder from "@/models/Folder";
+
 export async function GET(request) {
     const { user } = await getServerSession();
 
@@ -16,14 +18,24 @@ export async function GET(request) {
         path: "urls",
         method: Url,
     });
-    const urls = await Url.find({ user: userData._id })
-        .populate({
-            path: "clicks",
-            model: Clicks,
-        })
-        .exec();
+    const urls = await Url.find({ user: userData._id }).populate("clicks");
 
-    return NextResponse.json({ urls });
+    const data = await Folder.find({ user: userData._id }).populate({
+        path: "urls",
+        populate: {
+            path: "clicks",
+        },
+    });
+    const unassignedUrl = await Url.find({
+        folder: { $exists: false },
+        user: userData._id,
+    }).populate("clicks");
+    data.push({
+        name: "Unassigned",
+        urls: unassignedUrl,
+        _id: "unassigned_urls_folder",
+    });
+    return NextResponse.json({ urls, data });
 }
 
 export async function POST(request) {
@@ -61,7 +73,11 @@ export async function POST(request) {
 }
 
 export async function DELETE(request) {
-    // const { urlId } = await request.json();
+    const session = await getServerSession();
+    if (!session) {
+        throw new Error("Please login to your account!");
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id").toString();
     if (!id) {

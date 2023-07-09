@@ -45,6 +45,8 @@ export default function App() {
 
     const [deleteUrlId, setDeleteUrlId] = React.useState(null);
 
+    const [activeUrl, setActiveUrl] = React.useState(null);
+
     async function getUrls() {
         const res = await fetch("/api/urls");
         const data = await res.json();
@@ -264,6 +266,8 @@ export default function App() {
                     <Navigation
                         data={userData}
                         setNewUrlModalFormOpen={setNewUrlModalFormOpen}
+                        activeUrl={activeUrl}
+                        setActiveUrl={setActiveUrl}
                     />
                 </Layout.SideNav>
 
@@ -281,6 +285,8 @@ export default function App() {
                     />
                     {loadingData ? (
                         <LinearProgress />
+                    ) : activeUrl ? (
+                        ""
                     ) : (
                         <div
                             style={{ height: "100%" }}

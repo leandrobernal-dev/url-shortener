@@ -61,9 +61,24 @@ export default function App() {
             console.log(data);
         }
     }
+    async function getUrlById() {
+        if (!activeUrl) return;
+        const res = await fetch("/api/urls?id=" + activeUrl);
+        const data = await res.json();
+
+        if (res.ok) {
+            console.log(data);
+            setLoadingData(() => false);
+        } else {
+            console.log(data);
+        }
+    }
     React.useEffect(() => {
         getUrls();
     }, []);
+    React.useEffect(() => {
+        getUrlById();
+    }, [activeUrl]);
 
     async function handleDeleteUrl(id) {
         const response = await fetch("/api/urls?id=" + id, {

@@ -18,7 +18,6 @@ export async function GET(request) {
 
     if (searchParams.get("id")) {
         const id = searchParams.get("id").toString();
-        console.log(id);
         // const userData = await User.findOne({ email: user.email });
         const data = await Url.findById(id).populate("detailedClicks");
         return NextResponse.json({ data });

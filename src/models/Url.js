@@ -43,6 +43,11 @@ UrlSchema.virtual("clicks", {
     foreignField: "url",
     count: true,
 });
+UrlSchema.virtual("detailedClicks", {
+    ref: Clicks,
+    localField: "_id",
+    foreignField: "url",
+});
 
 const Url = urlsDb.model("Urls", UrlSchema);
 export default Url;

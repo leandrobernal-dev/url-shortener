@@ -14,6 +14,16 @@ export async function GET(request) {
         throw new Error("Pleaes login to your account");
     }
 
+    const { searchParams } = new URL(request.url);
+
+    if (searchParams.get("id")) {
+        const id = searchParams.get("id").toString();
+        console.log(id);
+        // const userData = await User.findOne({ email: user.email });
+        const data = await Url.findById(id).populate("clicks");
+        return NextResponse.json({ data });
+    }
+
     const userData = await User.findOne({ email: user.email }).populate({
         path: "urls",
         method: Url,
@@ -35,7 +45,7 @@ export async function GET(request) {
         urls: unassignedUrl,
         _id: "unassigned_urls_folder",
     });
-    return NextResponse.json({ urls, data });
+    return NextResponse.json({ data });
 }
 
 export async function POST(request) {

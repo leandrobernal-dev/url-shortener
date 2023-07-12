@@ -21,6 +21,10 @@ const ClickSchema = new Schema(
             type: String,
             required: false,
         },
+        device: {
+            type: String,
+            required: false,
+        },
     },
     { timestamps: true }
 );

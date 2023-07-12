@@ -3,7 +3,7 @@ import Url from "@/models/Url";
 import { NextResponse } from "next/server";
 
 export const POST = async (request) => {
-    const { urlId, ip, location, os, device } = await request.json();
+    const { urlId, ip, location, os, device, referrer } = await request.json();
 
     const data = await Url.findOne({ shortenedUrl: urlId });
     if (!data) {
@@ -17,6 +17,7 @@ export const POST = async (request) => {
             os,
             device,
             ip,
+            referrer,
         });
         await newClick.save();
     } catch (error) {

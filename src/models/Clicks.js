@@ -25,6 +25,10 @@ const ClickSchema = new Schema(
             type: String,
             required: false,
         },
+        referrer: {
+            type: String,
+            required: true,
+        },
     },
     { timestamps: true }
 );

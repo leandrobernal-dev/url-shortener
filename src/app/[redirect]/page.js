@@ -69,7 +69,8 @@ export default function RedirectPage(request) {
         console.log(deviceInfo);
         const os = deviceInfo.operatingSystem;
         const device = deviceInfo.deviceType;
-        const body = { urlId, ip, location, os, device };
+        const referrer = !document.referrer ? "direct" : document.referrer;
+        const body = { urlId, ip, location, os, device, referrer };
         console.log(body);
         fetch("/api/clicks", {
             method: "POST",

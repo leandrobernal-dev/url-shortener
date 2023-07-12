@@ -16,6 +16,7 @@ export async function GET(request) {
 
     const { searchParams } = new URL(request.url);
 
+    // intercept data if 'id' is specified in the request and return urlById
     if (searchParams.get("id")) {
         const id = searchParams.get("id").toString();
         // const userData = await User.findOne({ email: user.email });
@@ -27,23 +28,7 @@ export async function GET(request) {
         path: "urls",
         method: Url,
     });
-    const urls = await Url.find({ user: userData._id }).populate("clicks");
-
-    const data = await Folder.find({ user: userData._id }).populate({
-        path: "urls",
-        populate: {
-            path: "clicks",
-        },
-    });
-    const unassignedUrl = await Url.find({
-        folder: { $exists: false },
-        user: userData._id,
-    }).populate("clicks");
-    data.push({
-        name: "Unassigned",
-        urls: unassignedUrl,
-        _id: "unassigned_urls_folder",
-    });
+    const data = await Url.find({ user: userData._id }).populate("clicks");
     return NextResponse.json({ data });
 }
 

@@ -20,8 +20,46 @@ export async function GET(request) {
     if (searchParams.get("id")) {
         const id = searchParams.get("id").toString();
         // const userData = await User.findOne({ email: user.email });
-        const data = await Url.findById(id).populate("detailedClicks");
-        return NextResponse.json({ data });
+        const data = await Url.findById(id).populate("clicks");
+        const device = await Clicks.aggregate([
+            {
+                $group: {
+                    _id: "$device",
+                    count: { $sum: 1 },
+                },
+            },
+        ]);
+        const os = await Clicks.aggregate([
+            {
+                $group: {
+                    _id: "$os",
+                    count: { $sum: 1 },
+                },
+            },
+        ]);
+        const location = await Clicks.aggregate([
+            {
+                $group: {
+                    _id: "$location",
+                    count: { $sum: 1 },
+                },
+            },
+        ]);
+        const referrer = await Clicks.aggregate([
+            {
+                $group: {
+                    _id: "$referrer",
+                    count: { $sum: 1 },
+                },
+            },
+        ]);
+        return NextResponse.json({
+            data,
+            device,
+            os,
+            location,
+            referrer,
+        });
     }
 
     const userData = await User.findOne({ email: user.email }).populate({

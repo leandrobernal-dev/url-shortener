@@ -60,6 +60,55 @@ export default function RedirectPage(request) {
             };
         }
     }
+    function getReferrerName() {
+        const referrer = document.referrer.toLowerCase();
+        try {
+            const referrerUrl = new URL(referrer);
+            const hostname = referrerUrl.hostname.toLowerCase();
+
+            if (hostname.includes("facebook.com")) {
+                return "Facebook";
+            } else if (hostname.includes("twitter.com")) {
+                return "Twitter";
+            } else if (hostname.includes("youtube.com")) {
+                return "YouTube";
+            } else if (hostname.includes("instagram.com")) {
+                return "Instagram";
+            } else if (hostname.includes("linkedin.com")) {
+                return "LinkedIn";
+            } else if (hostname.includes("pinterest.com")) {
+                return "Pinterest";
+            } else if (hostname.includes("tumblr.com")) {
+                return "Tumblr";
+            } else if (hostname.includes("reddit.com")) {
+                return "Reddit";
+            } else if (hostname.includes("snapchat.com")) {
+                return "Snapchat";
+            } else if (hostname.includes("whatsapp.com")) {
+                return "WhatsApp";
+            } else if (hostname.includes("tiktok.com")) {
+                return "TikTok";
+            } else if (hostname.includes("spotify.com")) {
+                return "Spotify";
+            } else if (hostname.includes("github.com")) {
+                return "GitHub";
+            } else if (hostname.includes("stackoverflow.com")) {
+                return "Stack Overflow";
+            } else if (hostname.includes("medium.com")) {
+                return "Medium";
+            } else if (hostname.includes("quora.com")) {
+                return "Quora";
+            }
+        } catch (error) {
+            console.error("Error parsing referrer URL:", error);
+        }
+
+        if (referrer === "") {
+            return "Direct";
+        } else {
+            return "Others";
+        }
+    }
 
     async function addClick() {
         const ip = await getIp();
@@ -69,7 +118,7 @@ export default function RedirectPage(request) {
         console.log(deviceInfo);
         const os = deviceInfo.operatingSystem;
         const device = deviceInfo.deviceType;
-        const referrer = !document.referrer ? "direct" : document.referrer;
+        const referrer = getReferrerName();
         const body = { urlId, ip, location, os, device, referrer };
         console.log(body);
         fetch("/api/clicks", {

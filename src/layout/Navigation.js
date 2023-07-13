@@ -13,7 +13,7 @@ import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import AddIcon from "@mui/icons-material/Add";
 import NewFolderModalForm from "@/components/NewFolderModal";
-import { Button, Menu, MenuItem, Typography } from "@mui/joy";
+import { Avatar, Button, Menu, MenuItem, Typography } from "@mui/joy";
 import { LinkRounded, Folder, Visibility } from "@mui/icons-material";
 
 export default function Navigation({
@@ -22,49 +22,10 @@ export default function Navigation({
     activeUrl,
     setActiveUrl,
 }) {
-    const [newFolderModalOpen, setNewFolderModalOpen] = React.useState(false);
-
-    async function handleNewFolder(e) {
-        e.preventDefault();
-        setNewFolderModalOpen(() => false);
-
-        const formElements = e.currentTarget.elements;
-        const name = formElements.name.value;
-        const description = formElements.description.value;
-
-        const response = await fetch("/api/folder", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                name,
-                description,
-            }),
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            console.log(data);
-        } else {
-            console.log(response);
-        }
-    }
-
     const addNewButtonRef = React.useRef(null);
-    const [addNewMenuOpen, setAddNewMenuOpen] = React.useState(false);
-    function handleAddNewMenuClose() {
-        setAddNewMenuOpen(() => false);
-    }
 
     return (
         <>
-            <NewFolderModalForm
-                loading={false}
-                open={newFolderModalOpen}
-                setOpen={setNewFolderModalOpen}
-                handleSubmit={handleNewFolder}
-            />
             <List
                 size="sm"
                 sx={{ "--ListItem-radius": "8px", "--List-gap": "4px" }}
@@ -74,11 +35,7 @@ export default function Navigation({
                         Browse
                         <Button
                             ref={addNewButtonRef}
-                            id="basic-demo-button"
-                            aria-controls={"basic-menu"}
-                            aria-haspopup="true"
-                            aria-expanded={addNewMenuOpen ? "true" : undefined}
-                            onClick={() => setAddNewMenuOpen((open) => !open)}
+                            onClick={() => setNewUrlModalFormOpen(() => true)}
                             size="sm"
                             variant="plain"
                             color="primary"
@@ -86,32 +43,6 @@ export default function Navigation({
                         >
                             <AddIcon fontSize="medium" color="primary" />
                         </Button>
-                        <Menu
-                            id="basic-menu"
-                            anchorEl={addNewButtonRef.current}
-                            open={addNewMenuOpen}
-                            onClose={handleAddNewMenuClose}
-                            aria-labelledby="basic-demo-button"
-                        >
-                            <MenuItem
-                                onClick={() =>
-                                    setNewUrlModalFormOpen(() => true)
-                                }
-                            >
-                                <Typography startDecorator={<LinkRounded />}>
-                                    URL
-                                </Typography>
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() =>
-                                    setNewFolderModalOpen(() => true)
-                                }
-                            >
-                                <Typography startDecorator={<FolderOpenIcon />}>
-                                    Folder
-                                </Typography>
-                            </MenuItem>
-                        </Menu>
                     </ListSubheader>
 
                     {/* <LinearProgress /> */}
@@ -136,66 +67,59 @@ export default function Navigation({
                         }}
                     >
                         <ListItem nested>
-                            {data.map((folder) => {
+                            {data.map((url, urlIndex) => {
                                 return (
-                                    <div key={folder._id}>
-                                        <ListItemButton variant="plain">
-                                            <ListItemDecorator>
-                                                <Folder fontSize="lg" />
-                                            </ListItemDecorator>
-                                            {folder.name}
-                                            <Typography level="body3">
-                                                {` : (${folder.urls.length})`}
-                                            </Typography>
-                                        </ListItemButton>
-                                        {folder.urls.map((url, urlIndex) => {
-                                            return (
-                                                <List key={url._id}>
-                                                    <ListItem>
-                                                        <ListItemButton
-                                                            selected={
-                                                                activeUrl ===
-                                                                url._id
-                                                            }
-                                                            variant={
-                                                                activeUrl ===
-                                                                url._id
-                                                                    ? "soft"
-                                                                    : "plain"
-                                                            }
-                                                            color={
-                                                                activeUrl ===
-                                                                url._id
-                                                                    ? "primary"
-                                                                    : undefined
-                                                            }
-                                                            onClick={() =>
-                                                                setActiveUrl(
-                                                                    () =>
-                                                                        url._id
-                                                                )
-                                                            }
-                                                        >
-                                                            <ListItemDecorator>
-                                                                <LinkRounded fontSize="lg" />
-                                                            </ListItemDecorator>
-                                                            <ListItemContent>
-                                                                {url.name}
-                                                            </ListItemContent>
-                                                            <Typography
-                                                                startDecorator={
-                                                                    <Visibility />
-                                                                }
-                                                                level="body3"
-                                                            >
-                                                                {url.clicks}
-                                                            </Typography>
-                                                        </ListItemButton>
-                                                    </ListItem>
-                                                </List>
-                                            );
-                                        })}
-                                    </div>
+                                    <List key={url._id}>
+                                        <ListItem>
+                                            <ListItemButton
+                                                selected={activeUrl === url._id}
+                                                variant={
+                                                    activeUrl === url._id
+                                                        ? "soft"
+                                                        : "plain"
+                                                }
+                                                color={
+                                                    activeUrl === url._id
+                                                        ? "primary"
+                                                        : undefined
+                                                }
+                                                onClick={() =>
+                                                    setActiveUrl(() => url._id)
+                                                }
+                                            >
+                                                <ListItemDecorator>
+                                                    <Avatar
+                                                        size="sm"
+                                                        alt={
+                                                            String(
+                                                                url.name
+                                                            ).toUpperCase()[0]
+                                                        }
+                                                        src={
+                                                            new URL(url.url)
+                                                                .protocol +
+                                                            "//" +
+                                                            new URL(url.url)
+                                                                .host +
+                                                            "/favicon.ico"
+                                                        }
+                                                    />
+                                                    {/* <LinkRounded fontSize="lg" /> */}
+                                                </ListItemDecorator>
+                                                <ListItemContent>
+                                                    {url.name}
+                                                </ListItemContent>
+                                                <Typography
+                                                    startDecorator={
+                                                        <Visibility />
+                                                    }
+                                                    level="body3"
+                                                >
+                                                    {url.clicks}
+                                                </Typography>
+                                            </ListItemButton>
+                                        </ListItem>
+                                    </List>
                                 );
                             })}
                         </ListItem>

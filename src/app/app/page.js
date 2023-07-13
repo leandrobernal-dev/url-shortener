@@ -10,6 +10,7 @@ import {
     Input,
     IconButton,
     LinearProgress,
+    Card,
 } from "@mui/joy";
 
 // Icons import
@@ -32,6 +33,8 @@ import { Add } from "@mui/icons-material";
 import NewUrlModalForm from "@/components/NewUrlModal";
 import UrlCard from "@/components/UrlCard";
 import DeleteUrlModal from "@/components/DeleteUrlModal";
+import DoughnutChart from "@/components/DoughnutChart";
+import LineChart from "@/components/LineChart";
 
 export default function App() {
     const { data: session, status } = useSession({ required: true });
@@ -46,6 +49,26 @@ export default function App() {
     const [deleteUrlId, setDeleteUrlId] = React.useState(null);
 
     const [activeUrl, setActiveUrl] = React.useState(null);
+    const [activeUrlData, setActiveUrlData] = React.useState({});
+    const [devicesData, setDeviceData] = React.useState({
+        labels: [],
+        values: [],
+        colors: ["#ff6384", "#36a2eb", "#ffce56"],
+    });
+    const [osData, setOsData] = React.useState({
+        labels: [],
+        values: [],
+        colors: ["#ff6384", "#36a2eb", "#ffce56"],
+    });
+    const [clickPeriodData, setClickPeriodData] = React.useState({
+        labels: [],
+        values: [],
+    });
+    const [referrerData, setReferrerData] = React.useState({
+        labels: [],
+        values: [],
+        colors: ["#ff6384", "#36a2eb", "#ffce56"],
+    });
 
     async function getUrls() {
         const res = await fetch("/api/urls");
@@ -68,6 +91,7 @@ export default function App() {
 
         if (res.ok) {
             console.log(data);
+            setActiveUrlData(() => data);
             setLoadingData(() => false);
         } else {
             console.log(data);
@@ -77,7 +101,70 @@ export default function App() {
         getUrls();
     }, []);
     React.useEffect(() => {
+        if (activeUrlData) {
+            const months = [...Array(12)].map((_, index) => {
+                const date = new Date(2000, index, 1);
+                return date.toLocaleDateString("default", { month: "long" });
+            });
+
+            const updatedClickPeriodata = {
+                title: "Timeline",
+                labels: months,
+                values: activeUrlData.clickPeriod
+                    ? Array.from({ length: 12 }, (_, index) => {
+                          const foundObject = activeUrlData.clickPeriod.find(
+                              (obj) => obj._id === index + 1
+                          );
+                          return foundObject ? foundObject.count : 0;
+                      })
+                    : [],
+                colors: ["#ff6384", "#36a2eb", "#ffce56"],
+            };
+            const updatedDevicesData = {
+                title: "Devices",
+                labels: activeUrlData.device
+                    ? activeUrlData.device.map((url) =>
+                          url._id ? url._id : "Others"
+                      )
+                    : [],
+                values: activeUrlData.device
+                    ? activeUrlData.device.map((url) => url.count)
+                    : [],
+                colors: ["#ff6384", "#36a2eb", "#ffce56"],
+            };
+            const updatedOsData = {
+                title: "Operating System",
+                labels: activeUrlData.os
+                    ? activeUrlData.os.map((device) =>
+                          device._id ? device._id : "Others"
+                      )
+                    : [],
+                values: activeUrlData.os
+                    ? activeUrlData.os.map((os) => os.count)
+                    : [],
+                colors: ["#ff6384", "#36a2eb", "#ffce56"],
+            };
+            const updatedReferrerData = {
+                title: "Referer",
+                labels: activeUrlData.referrer
+                    ? activeUrlData.referrer.map((referrer) =>
+                          referrer._id ? referrer._id : "Others"
+                      )
+                    : [],
+                values: activeUrlData.referrer
+                    ? activeUrlData.referrer.map((referrer) => referrer.count)
+                    : [],
+                colors: ["#ff6384", "#36a2eb", "#ffce56"],
+            };
+            setDeviceData(updatedDevicesData);
+            setOsData(updatedOsData);
+            setClickPeriodData(updatedClickPeriodata);
+            setReferrerData(updatedReferrerData);
+        }
+    }, [activeUrlData]);
+    React.useEffect(() => {
         getUrlById();
+        console.log(devicesData);
     }, [activeUrl]);
 
     async function handleDeleteUrl(id) {
@@ -129,6 +216,7 @@ export default function App() {
     }
 
     const [drawerOpen, setDrawerOpen] = React.useState(false);
+
     return (
         <CssVarsProvider disableTransitionOnChange theme={theme}>
             <CssBaseline />
@@ -301,7 +389,20 @@ export default function App() {
                     {loadingData ? (
                         <LinearProgress />
                     ) : activeUrl ? (
-                        ""
+                        <div className="grid gap-4 grid-cols-2">
+                            <Card>
+                                <LineChart data={clickPeriodData} />
+                            </Card>
+                            <Card>
+                                <DoughnutChart data={devicesData} />
+                            </Card>
+                            <Card>
+                                <DoughnutChart data={osData} />
+                            </Card>
+                            <Card>
+                                <DoughnutChart data={referrerData} />
+                            </Card>
+                        </div>
                     ) : (
                         <div
                             style={{ height: "100%" }}

@@ -22,6 +22,7 @@ export async function GET(request) {
         // const userData = await User.findOne({ email: user.email });
         const data = await Url.findById(id).populate("clicks");
         const device = await Clicks.aggregate([
+            { $match: { url: data._id } },
             {
                 $group: {
                     _id: "$device",
@@ -30,6 +31,7 @@ export async function GET(request) {
             },
         ]);
         const os = await Clicks.aggregate([
+            { $match: { url: data._id } },
             {
                 $group: {
                     _id: "$os",
@@ -38,6 +40,7 @@ export async function GET(request) {
             },
         ]);
         const location = await Clicks.aggregate([
+            { $match: { url: data._id } },
             {
                 $group: {
                     _id: "$location",
@@ -46,6 +49,7 @@ export async function GET(request) {
             },
         ]);
         const referrer = await Clicks.aggregate([
+            { $match: { url: data._id } },
             {
                 $group: {
                     _id: "$referrer",

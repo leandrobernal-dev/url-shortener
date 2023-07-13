@@ -21,6 +21,24 @@ export async function GET(request) {
         const id = searchParams.get("id").toString();
         // const userData = await User.findOne({ email: user.email });
         const data = await Url.findById(id).populate("clicks");
+        const currentYear = new Date().getFullYear();
+        const clickPeriod = await Clicks.aggregate([
+            {
+                $match: {
+                    url: data._id,
+                    createdAt: {
+                        $gte: new Date(currentYear, 0, 1), // Start of the year
+                        $lt: new Date(currentYear + 1, 0, 1), // Start of the next year
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: { $month: "$createdAt" },
+                    count: { $sum: 1 },
+                },
+            },
+        ]);
         const device = await Clicks.aggregate([
             { $match: { url: data._id } },
             {
@@ -63,6 +81,7 @@ export async function GET(request) {
             os,
             location,
             referrer,
+            clickPeriod,
         });
     }
 

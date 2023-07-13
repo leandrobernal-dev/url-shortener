@@ -1,20 +1,28 @@
 import Chart from "chart.js/auto";
 import React, { useEffect, useRef } from "react";
 
-const DoughnutChart = ({ data }) => {
+const BarChart = ({ data }) => {
     const chartRef = useRef(null);
 
     useEffect(() => {
         const ctx = chartRef.current.getContext("2d");
         const pieChart = new Chart(ctx, {
-            type: "doughnut",
+            type: "bar",
             data: {
-                labels: data.labels,
+                labels: data.location
+                    ? data.location.map((url) =>
+                          url._id ? String(url._id).split(";")[2] : "Null"
+                      )
+                    : [],
                 datasets: [
                     {
-                        label: data.title,
-                        data: data.values,
-                        backgroundColor: data.colors,
+                        label: "Locations",
+                        data: data.location
+                            ? data.location.map((url) =>
+                                  url.count ? url.count : "Null"
+                              )
+                            : [],
+                        backgroundColor: ["#ff6384", "#36a2eb", "#ffce56"],
                     },
                 ],
             },
@@ -40,4 +48,4 @@ const DoughnutChart = ({ data }) => {
     return <canvas ref={chartRef} />;
 };
 
-export default DoughnutChart;
+export default BarChart;

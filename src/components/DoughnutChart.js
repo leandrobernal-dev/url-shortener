@@ -22,7 +22,8 @@ const DoughnutChart = ({ data }) => {
                 responsive: true,
                 plugins: {
                     legend: {
-                        position: "top",
+                        position: "right",
+                        align: "start",
                     },
                     title: {
                         display: true,

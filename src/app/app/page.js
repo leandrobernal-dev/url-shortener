@@ -462,12 +462,9 @@ export default function App() {
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
                                             <Avatar
-                                                alt={
-                                                    String(
-                                                        activeUrlData.data.url
-                                                            .name
-                                                    ).toUpperCase()[0]
-                                                }
+                                                alt={String(
+                                                    activeUrlData.data.name
+                                                )[0].toUpperCase()}
                                                 src={
                                                     new URL(
                                                         activeUrlData.data.url

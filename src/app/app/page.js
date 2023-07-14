@@ -39,6 +39,7 @@ import {
     EditRounded,
     MoreHoriz,
     Sell,
+    Visibility,
 } from "@mui/icons-material";
 import NewUrlModalForm from "@/components/NewUrlModal";
 import UrlCard from "@/components/UrlCard";
@@ -566,6 +567,17 @@ export default function App() {
                                                 month: "short",
                                                 day: "numeric",
                                             })}
+                                        </Typography>
+                                        <Typography
+                                            level="body3"
+                                            className="flex gap-1 items-center"
+                                        >
+                                            <Visibility />
+                                            Clicked{" "}
+                                            <strong>
+                                                {activeUrlData.data.clicks}
+                                            </strong>{" "}
+                                            times
                                         </Typography>
                                         <Typography
                                             level="body3"

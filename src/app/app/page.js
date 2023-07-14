@@ -11,6 +11,9 @@ import {
     IconButton,
     LinearProgress,
     Card,
+    CardContent,
+    Divider,
+    Avatar,
 } from "@mui/joy";
 
 // Icons import
@@ -29,12 +32,21 @@ import { ColorSchemeToggle } from "@/theme/theme";
 
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
-import { Add } from "@mui/icons-material";
+import {
+    Add,
+    CalendarMonth,
+    ContentCopy,
+    EditRounded,
+    MoreHoriz,
+    Sell,
+} from "@mui/icons-material";
 import NewUrlModalForm from "@/components/NewUrlModal";
 import UrlCard from "@/components/UrlCard";
 import DeleteUrlModal from "@/components/DeleteUrlModal";
 import DoughnutChart from "@/components/DoughnutChart";
 import LineChart from "@/components/LineChart";
+import MapChart from "@/components/MapChart";
+import BarChart from "@/components/BarChart";
 
 export default function App() {
     const { data: session, status } = useSession({ required: true });
@@ -69,6 +81,12 @@ export default function App() {
         values: [],
         colors: ["#ff6384", "#36a2eb", "#ffce56"],
     });
+    const [locationData, setLocationData] = React.useState({
+        labels: [],
+        values: [],
+        colors: ["#ff6384", "#36a2eb", "#ffce56"],
+    });
+    const [locationMapData, setLocationMapData] = React.useState([]);
 
     async function getUrls() {
         const res = await fetch("/api/urls");
@@ -97,9 +115,13 @@ export default function App() {
             console.log(data);
         }
     }
+
+    // inital get urls
     React.useEffect(() => {
         getUrls();
     }, []);
+
+    // save analytics data
     React.useEffect(() => {
         if (activeUrlData) {
             const months = [...Array(12)].map((_, index) => {
@@ -123,48 +145,92 @@ export default function App() {
             const updatedDevicesData = {
                 title: "Devices",
                 labels: activeUrlData.device
-                    ? activeUrlData.device.map((url) =>
-                          url._id ? url._id : "Others"
-                      )
+                    ? activeUrlData.device
+                          .sort((a, b) => b.count - a.count)
+                          .map((url) => (url._id ? url._id : "Others"))
                     : [],
                 values: activeUrlData.device
-                    ? activeUrlData.device.map((url) => url.count)
+                    ? activeUrlData.device
+                          .sort((a, b) => b.count - a.count)
+                          .map((url) => url.count)
                     : [],
                 colors: ["#ff6384", "#36a2eb", "#ffce56"],
             };
             const updatedOsData = {
                 title: "Operating System",
                 labels: activeUrlData.os
-                    ? activeUrlData.os.map((device) =>
-                          device._id ? device._id : "Others"
-                      )
+                    ? activeUrlData.os
+                          .sort((a, b) => b.count - a.count)
+                          .map((device) => (device._id ? device._id : "Others"))
                     : [],
                 values: activeUrlData.os
-                    ? activeUrlData.os.map((os) => os.count)
+                    ? activeUrlData.os
+                          .sort((a, b) => b.count - a.count)
+
+                          .map((os) => os.count)
                     : [],
                 colors: ["#ff6384", "#36a2eb", "#ffce56"],
             };
             const updatedReferrerData = {
                 title: "Referer",
                 labels: activeUrlData.referrer
-                    ? activeUrlData.referrer.map((referrer) =>
-                          referrer._id ? referrer._id : "Others"
-                      )
+                    ? activeUrlData.referrer
+                          .sort((a, b) => b.count - a.count)
+                          .map((referrer) =>
+                              referrer._id ? referrer._id : "Others"
+                          )
                     : [],
                 values: activeUrlData.referrer
-                    ? activeUrlData.referrer.map((referrer) => referrer.count)
+                    ? activeUrlData.referrer
+                          .sort((a, b) => b.count - a.count)
+                          .map((referrer) => referrer.count)
                     : [],
                 colors: ["#ff6384", "#36a2eb", "#ffce56"],
             };
+            const updatedLocationData = {
+                title: "Top Locations",
+                labels: activeUrlData.location
+                    ? activeUrlData.location
+                          .sort((a, b) => b.count - a.count)
+                          .map((location) =>
+                              location._id
+                                  ? String(location._id).split(";")[2]
+                                  : "Others"
+                          )
+                    : [],
+                values: activeUrlData.location
+                    ? activeUrlData.location
+                          .sort((a, b) => b.count - a.count)
+                          .map((location) => location.count)
+                    : [],
+                colors: ["#ff6384", "#36a2eb", "#ffce56"],
+            };
+
+            const updatedLocationMapData = activeUrlData.location
+                ? activeUrlData.location
+                      .map((item) => {
+                          if (!item._id) return null;
+                          const id = item._id.split(";")[1]; // Extract the country code from the _id
+                          return {
+                              id,
+                              count: item.count,
+                          };
+                      })
+                      .filter(Boolean)
+                : [];
+            setLocationMapData(() => updatedLocationMapData);
+            setLocationData(updatedLocationData);
             setDeviceData(updatedDevicesData);
             setOsData(updatedOsData);
             setClickPeriodData(updatedClickPeriodata);
             setReferrerData(updatedReferrerData);
         }
     }, [activeUrlData]);
+
+    // get url by id onChange(activeUrl)
     React.useEffect(() => {
+        setLoadingData(() => true);
         getUrlById();
-        console.log(devicesData);
     }, [activeUrl]);
 
     async function handleDeleteUrl(id) {
@@ -216,6 +282,7 @@ export default function App() {
     }
 
     const [drawerOpen, setDrawerOpen] = React.useState(false);
+    const [copyUrlText, setCopyUrlText] = React.useState("Copy");
 
     return (
         <CssVarsProvider disableTransitionOnChange theme={theme}>
@@ -388,20 +455,151 @@ export default function App() {
                     />
                     {loadingData ? (
                         <LinearProgress />
-                    ) : activeUrl ? (
-                        <div className="grid gap-4 grid-cols-2">
-                            <Card>
-                                <LineChart data={clickPeriodData} />
+                    ) : activeUrlData.data ? (
+                        <div className="flex flex-col gap-4">
+                            <Card sx={{ width: "100%" }}>
+                                <div className="flex flex-col gap-4">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <Avatar
+                                                alt={
+                                                    String(
+                                                        activeUrlData.data.url
+                                                            .name
+                                                    ).toUpperCase()[0]
+                                                }
+                                                src={
+                                                    new URL(
+                                                        activeUrlData.data.url
+                                                    ).protocol +
+                                                    "//" +
+                                                    new URL(
+                                                        activeUrlData.data.url
+                                                    ).host +
+                                                    "/favicon.ico"
+                                                }
+                                            />
+                                            <div>
+                                                <Typography
+                                                    level="h1"
+                                                    fontSize="lg"
+                                                    sx={{ mb: 0.5 }}
+                                                >
+                                                    {String(
+                                                        activeUrlData.data.name
+                                                    )}
+                                                </Typography>
+                                                <a
+                                                    href={
+                                                        window.location.origin +
+                                                        "/" +
+                                                        activeUrlData.data
+                                                            .shortenedUrl
+                                                    }
+                                                    target="blank"
+                                                >
+                                                    <Typography
+                                                        color="primary"
+                                                        level="body2"
+                                                    >
+                                                        {window.location
+                                                            .origin +
+                                                            "/" +
+                                                            activeUrlData.data
+                                                                .shortenedUrl}
+                                                    </Typography>
+                                                </a>
+                                                <a
+                                                    href={
+                                                        activeUrlData.data.url
+                                                    }
+                                                    target="blank"
+                                                >
+                                                    <Typography level="body3">
+                                                        {activeUrlData.data.url}
+                                                    </Typography>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <IconButton
+                                                size="sm"
+                                                variant="outlined"
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(
+                                                        window.location.origin +
+                                                            "/" +
+                                                            activeUrlData.data
+                                                                .shortenedUrl
+                                                    );
+                                                    setCopyUrlText("Copied!");
+                                                    setTimeout(() => {
+                                                        setCopyUrlText("Copy");
+                                                    }, 2000);
+                                                }}
+                                            >
+                                                <ContentCopy fontSize="small" />{" "}
+                                                {copyUrlText}
+                                            </IconButton>
+                                            <IconButton
+                                                size="sm"
+                                                variant="outlined"
+                                            >
+                                                <EditRounded />
+                                            </IconButton>
+                                            <IconButton
+                                                size="sm"
+                                                variant="outlined"
+                                            >
+                                                <MoreHoriz />
+                                            </IconButton>
+                                        </div>
+                                    </div>
+                                    <Divider inset="none" />
+                                    <div className="flex gap-6">
+                                        <Typography
+                                            level="body3"
+                                            className="flex gap-1 items-center"
+                                        >
+                                            <CalendarMonth />
+                                            {new Date(
+                                                activeUrlData.data.createdAt
+                                            ).toLocaleDateString("en-US", {
+                                                year: "numeric",
+                                                month: "short",
+                                                day: "numeric",
+                                            })}
+                                        </Typography>
+                                        <Typography
+                                            level="body3"
+                                            className="flex gap-1 items-center"
+                                        >
+                                            <Sell />
+                                            No Tags
+                                        </Typography>
+                                    </div>
+                                </div>
                             </Card>
-                            <Card>
-                                <DoughnutChart data={devicesData} />
-                            </Card>
-                            <Card>
-                                <DoughnutChart data={osData} />
-                            </Card>
-                            <Card>
-                                <DoughnutChart data={referrerData} />
-                            </Card>
+                            <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+                                {[
+                                    <MapChart data={locationMapData} />,
+                                    <DoughnutChart data={locationData} />,
+                                    <LineChart data={clickPeriodData} />,
+                                    <DoughnutChart data={devicesData} />,
+                                    <DoughnutChart data={osData} />,
+                                    <DoughnutChart data={referrerData} />,
+                                ].map((el, index) => (
+                                    <Card
+                                        key={el + index + "analytics-cards"}
+                                        sx={{
+                                            position: "relative",
+                                            height: "600px",
+                                        }}
+                                    >
+                                        {el}
+                                    </Card>
+                                ))}
+                            </div>
                         </div>
                     ) : (
                         <div

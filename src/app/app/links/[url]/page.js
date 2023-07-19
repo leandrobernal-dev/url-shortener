@@ -2,12 +2,17 @@
 
 import DoughnutChart from "@/components/DoughnutChart";
 import Loading from "@/components/Loading";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Close } from "@mui/icons-material";
+import { useParams, useRouter } from "next/navigation";
+import { useContext, useEffect, useState } from "react";
+import { SelectedLinkContext } from "../layout";
 
 export default function UrlDetails() {
+	const router = useRouter();
 	const params = useParams();
 	const urlId = String(params.url);
+
+	const { activeLink, setActiveLink } = useContext(SelectedLinkContext);
 
 	const [isLoading, setIsLoading] = useState(true);
 
@@ -58,18 +63,35 @@ export default function UrlDetails() {
 	}, [activeUrlData]);
 
 	return (
-		<div
-			className={` h-full w-full p-2 dark:text-white ${
-				isLoading ? "" : "grid grid-cols-1 gap-4 lg:grid-cols-2"
-			}`}
-		>
-			{isLoading ? (
-				<Loading />
-			) : (
-				<div className="container relative aspect-square rounded-lg p-2 shadow-lg dark:bg-secondary">
-					<DoughnutChart data={locationData} />
+		<div className="h-full w-full">
+			<div className="flex h-14 items-center justify-between border-b px-2 shadow dark:border-border dark:bg-secondary sm:hidden">
+				<h1>Link Details</h1>
+				<button
+					type="button"
+					onClick={() => {
+						router.push("/app/links");
+						setActiveLink(() => "");
+					}}
+					className="rounded-sm p-2 dark:hover:bg-primary"
+				>
+					<Close />
+				</button>
+			</div>
+			<div
+				className={` h-full w-full  dark:text-white ${
+					isLoading ? "" : "grid grid-cols-1 gap-4 lg:grid-cols-2"
+				}`}
+			>
+				<div className="h-full w-full p-2">
+					{isLoading ? (
+						<Loading />
+					) : (
+						<div className="relative aspect-square rounded-lg p-2 shadow-lg dark:bg-secondary">
+							<DoughnutChart data={locationData} />
+						</div>
+					)}
 				</div>
-			)}
+			</div>
 		</div>
 	);
 }

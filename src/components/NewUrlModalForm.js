@@ -1,10 +1,16 @@
+import { UserDataContext } from "@/context/UserDataContext";
 import { Add, Close } from "@mui/icons-material";
 import { CircularProgress } from "@mui/material";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 export default function NewUrlModalForm({ open, setOpen }) {
 	const [urlTitle, setUrlTitle] = useState("");
 	const [isLoadingPageTitle, setIsLoadingPageTitle] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const { setData } = useContext(UserDataContext);
+
+	const [formErrors, setFormErrors] = useState({});
 
 	function isValidURL(url) {
 		const urlPattern =
@@ -35,8 +41,57 @@ export default function NewUrlModalForm({ open, setOpen }) {
 		}
 	}
 
-	function handleNewUrlSubmit(e) {
+	async function handleNewUrlSubmit(e) {
 		e.preventDefault();
+		setFormErrors({});
+		setIsSubmitting(true);
+		const validationError = {};
+
+		const {
+			name: { value: name },
+			url: { value: url },
+			customBackHalf: { value: customBackHalf },
+			generateQR: { checked: generateQR },
+		} = e.currentTarget.elements;
+
+		console.log(name, url, customBackHalf, generateQR);
+
+		fetch("/api/urls", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				name,
+				url,
+				customBackHalf,
+				generateQR,
+			}),
+		})
+			.then((response) => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					if (response.status === 403) {
+						console.log(response);
+						setIsSubmitting(false);
+						setFormErrors({
+							customBackHalf: "Oops! Back-half already exist",
+						});
+					}
+				}
+			})
+			.then((data) => {
+				console.log(data.newUrl);
+				setIsSubmitting(false);
+				setData((prevState) => {
+					const updatedData = [...prevState];
+					updatedData.push(data.newUrl);
+					return updatedData;
+				});
+				setOpen();
+			})
+			.catch((error) => console.log(error));
 	}
 	return (
 		<>
@@ -103,32 +158,38 @@ export default function NewUrlModalForm({ open, setOpen }) {
 							/>
 						</div>
 						<div className="flex flex-col gap-1 py-2">
-							<label htmlFor="url-back-half-input">
+							<label htmlFor="customBackHalf">
 								Custom back-half (optional)
 							</label>
-							<div className="flex items-center gap-4">
+							<div className="flex items-start gap-4">
 								<input
-									name="custom-back-half"
+									name=""
 									className="w-36 rounded border bg-transparent p-2"
 									type="url"
-									placeholder="https://link.short"
+									placeholder="https://link.short/"
 									disabled
 								/>
-								<span>/</span>
-								<input
-									type="text"
-									id="url-back-half-input"
-									className="flex-1 rounded border bg-transparent p-2"
-									placeholder="my-collections..."
-								/>
+								<span className="flex-1">
+									<input
+										type="text"
+										id="customBackHalf"
+										className="w-full rounded border bg-transparent p-2"
+										placeholder="my-collections..."
+										minLength={8}
+									/>
+									{formErrors.customBackHalf && (
+										<p className="mt-2 text-xs text-red-600 dark:text-red-500">
+											{formErrors.customBackHalf}
+										</p>
+									)}
+								</span>
 							</div>
 						</div>
 						<div className=" py-2">
 							<label className="relative mr-5 inline-flex cursor-pointer items-center">
 								<input
-									name="generate-qr-code"
+									name="generateQR"
 									type="checkbox"
-									value=""
 									className="peer sr-only"
 								/>
 								<div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-4 dark:border-gray-600 dark:bg-gray-700 "></div>
@@ -142,8 +203,14 @@ export default function NewUrlModalForm({ open, setOpen }) {
 								type="submit"
 								className="w-full rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
 							>
-								<Add />
-								Create
+								{isSubmitting ? (
+									<CircularProgress size={24} />
+								) : (
+									<>
+										<Add />
+										Create
+									</>
+								)}
 							</button>
 						</div>
 					</form>

@@ -36,7 +36,7 @@ export default function App({ children }) {
 	return (
 		<SelectedLinkContext.Provider value={{ activeLink, setActiveLink }}>
 			<main className="flex h-full w-full dark:text-white">
-				<div className="flex w-full flex-col gap-3 border-r p-1 shadow dark:border-border dark:bg-tertiary sm:w-64">
+				<div className="flex w-full flex-col gap-3 p-1 shadow dark:border-border dark:bg-tertiary sm:w-64 sm:border-r">
 					{isLoading ? (
 						<Loading />
 					) : (

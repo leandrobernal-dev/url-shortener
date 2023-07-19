@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSelectedLayoutSegment } from "next/navigation";
 import Loading from "@/components/Loading";
 import SideBarLinkContextProvider from "@/context/SideBarLinkContextProvider";
+import { AdsClick, Sell, Visibility } from "@mui/icons-material";
 
 export default function App({ children }) {
 	const router = useRouter();
@@ -26,6 +27,21 @@ export default function App({ children }) {
 		}
 	}
 
+	function handleSort(e) {
+		setData((prevState) => {
+			const sortedArray = [...prevState];
+			sortedArray.sort((a, b) => {
+				if (e.target.value === "clicks") {
+					return b.clicks - a.clicks;
+				} else {
+					return new Date(a.createdAt) - new Date(b.createdAt);
+				}
+			});
+			console.log(sortedArray);
+			return sortedArray;
+		});
+	}
+
 	// inital get urls
 	useEffect(() => {
 		if (segment) setActiveLink(segment);
@@ -35,11 +51,52 @@ export default function App({ children }) {
 	return (
 		<SideBarLinkContextProvider value={{ activeLink, setActiveLink }}>
 			<main className="flex h-full w-full dark:text-white">
-				<div className="flex w-full flex-col gap-3 p-1 shadow dark:border-border dark:bg-tertiary sm:w-64 sm:border-r md:w-80">
+				<div className="flex w-full flex-col gap-3 p-2 shadow dark:border-border dark:bg-tertiary sm:w-64 sm:border-r md:w-80">
 					{isLoading ? (
 						<Loading />
 					) : (
 						<>
+							<div className="flex items-center gap-2 px-2">
+								<strong className="text-sm">Sort By:</strong>
+								<div
+									className="grid flex-1 grid-cols-2 gap-2 rounded bg-primary p-1"
+									onChange={handleSort}
+								>
+									<div>
+										<input
+											type="radio"
+											name="sort-by-input"
+											id="sort-by-date-option"
+											value="date"
+											className="peer hidden"
+											defaultChecked
+										/>
+										<label
+											htmlFor="sort-by-date-option"
+											className="block cursor-pointer select-none rounded p-1 text-center text-sm peer-checked:bg-blue-500 peer-checked:font-bold peer-checked:text-white"
+										>
+											Date
+										</label>
+									</div>
+
+									<div>
+										<input
+											type="radio"
+											name="sort-by-input"
+											id="sort-by-clicks-option"
+											value="clicks"
+											className="peer hidden"
+										/>
+										<label
+											htmlFor="sort-by-clicks-option"
+											className="block cursor-pointer select-none rounded p-1 text-center text-sm peer-checked:bg-blue-500 peer-checked:font-bold peer-checked:text-white"
+										>
+											Clicks
+										</label>
+									</div>
+								</div>
+							</div>
+
 							{data.map((url) => {
 								return (
 									<button
@@ -64,16 +121,50 @@ export default function App({ children }) {
 											/>
 										</span> */}
 
-										<div className="flex w-full flex-1 flex-col text-start">
-											<span className="text-xs">
-												{new Date(
-													url.createdAt,
-												).toLocaleDateString("en-US", {
-													month: "short",
-													day: "numeric",
-												})}
-											</span>
+										<div className="flex w-full flex-1 flex-col gap-2 text-start">
+											<div className="flex items-center justify-between text-xs">
+												<span className="opacity-70">
+													{new Date(
+														url.createdAt,
+													).toLocaleDateString(
+														"en-US",
+														{
+															month: "short",
+															day: "numeric",
+															year: "numeric",
+														},
+													)}
+												</span>
+											</div>
 											<span>{url.name}</span>
+
+											<span className="flex  items-center justify-between gap-2 text-xs opacity-60">
+												<span className="opacity-100">
+													{process.env.hostname +
+														url.shortenedUrl}
+												</span>
+												<span className="flex w-11 items-center gap-1">
+													<AdsClick
+														sx={{
+															fontSize: "0.9rem",
+														}}
+													/>
+													{url.clicks}
+												</span>
+											</span>
+
+											<span className="flex items-center gap-1 py-1 text-xs">
+												<Sell
+													sx={{
+														fontSize: "0.9rem",
+														opacity: "80%",
+													}}
+												/>
+												<strong>&#183;</strong>
+												<span className="opacity-60">
+													No Tags
+												</span>
+											</span>
 										</div>
 									</button>
 								);

@@ -94,7 +94,7 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-	const { name, url } = await request.json();
+	const { name, url, customBackHalf, generateQR } = await request.json();
 	const session = await getServerSession();
 
 	if (!session) {
@@ -106,7 +106,21 @@ export async function POST(request) {
 		const user = await User.findOne({ email });
 		if (!user) return NextResponse.json({ msg: "User not Found" });
 
-		const urlId = shortid.generate(); // Generate a unique URL
+		// Check if user included custom backhalf and check if it already exist
+		const backhalf = await Url.findOne({
+			shortenedUrl: customBackHalf,
+		});
+		if (backhalf) {
+			return NextResponse.json(
+				{
+					error: "Back half already Exist, please pick a unique one...",
+				},
+				{ status: 403 },
+			);
+		}
+
+		const urlId = backhalf ? shortid.generate() : customBackHalf;
+
 		const newUrl = new Url({
 			user: user._id,
 			name: name,

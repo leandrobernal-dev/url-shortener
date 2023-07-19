@@ -43,7 +43,6 @@ export default function SideBar({
 			return targetPath;
 		});
 
-		console.log(paths);
 		const active = paths
 			.map((href, index) => ({
 				index: index,

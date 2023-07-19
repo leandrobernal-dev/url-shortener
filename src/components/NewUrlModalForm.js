@@ -15,7 +15,7 @@ export default function NewUrlModalForm({ open, setOpen }) {
 					aria-label="modal-overlay"
 					className="fixed left-0 top-0 flex h-full w-full items-center justify-center bg-black/70 shadow-lg backdrop-blur-sm"
 				>
-					<form className="w-full max-w-lg rounded bg-primary p-4 dark:text-white">
+					<form className="w-11/12 max-w-lg rounded bg-primary p-4 dark:text-white">
 						<div className="flex w-full items-center justify-between">
 							<h1 className="py-3 text-2xl">Create New</h1>
 							<button

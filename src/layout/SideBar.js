@@ -60,15 +60,19 @@ export default function SideBar({
 		<div
 			className={`fixed left-0  top-0 z-10 h-full w-full bg-secondary px-2 text-white shadow-md md:relative md:border-r md:border-border 
 				${isOpen ? "" : "hidden md:block"} 
-				md:${isOpen ? "w-64" : "w-14"}`}
+				${isOpen ? "sm:w-64" : "sm:w-14"}`}
 		>
 			<div className="flex h-14 items-center">
 				<button
 					className="p-2"
 					onClick={() => setIsOpen((prevState) => !prevState)}
 				>
-					<Menu className="hidden md:block" />
-					<Close className="block md:hidden" />
+					<span className="hidden md:block">
+						<Menu />
+					</span>
+					<span className="block md:hidden">
+						<Close />
+					</span>
 				</button>
 			</div>
 			<button

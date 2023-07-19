@@ -1,19 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter, useSelectedLayoutSegment } from "next/navigation";
 import Loading from "@/components/Loading";
-import SideBarLinkContextProvider from "@/context/SideBarLinkContextProvider";
-import { AdsClick, Sell, Visibility } from "@mui/icons-material";
+import { AdsClick, Sell } from "@mui/icons-material";
+import { UserDataContext } from "@/context/UserDataContext";
 
 export default function App({ children }) {
 	const router = useRouter();
 	const segment = useSelectedLayoutSegment();
 
-	const [data, setData] = useState([]);
+	const { activeLink, setActiveLink, data, setData } =
+		useContext(UserDataContext);
 	const [isLoading, setIsLoading] = useState(true);
-
-	const [activeLink, setActiveLink] = useState("");
 
 	async function getUrls() {
 		const res = await fetch("/api/urls");
@@ -49,54 +48,54 @@ export default function App({ children }) {
 	}, []);
 
 	return (
-		<SideBarLinkContextProvider value={{ activeLink, setActiveLink }}>
-			<main className="flex h-full w-full dark:text-white">
-				<div className="flex w-full flex-col gap-3 p-2 shadow dark:border-border dark:bg-tertiary sm:w-64 sm:border-r md:w-80">
-					{isLoading ? (
-						<Loading />
-					) : (
-						<>
-							<div className="flex items-center gap-2 p-2 shadow">
-								<strong className="text-sm">Sort By:</strong>
-								<div
-									className="grid flex-1 grid-cols-2 gap-2 rounded bg-primary p-1"
-									onChange={handleSort}
-								>
-									<div>
-										<input
-											type="radio"
-											name="sort-by-input"
-											id="sort-by-date-option"
-											value="date"
-											className="peer hidden"
-											defaultChecked
-										/>
-										<label
-											htmlFor="sort-by-date-option"
-											className="block cursor-pointer select-none rounded p-1 text-center text-sm peer-checked:bg-blue-500 peer-checked:font-bold peer-checked:text-white"
-										>
-											Date
-										</label>
-									</div>
+		<main className="flex h-full w-full dark:text-white">
+			<div className="flex h-full w-full flex-col gap-3 p-2 shadow dark:border-border dark:bg-tertiary sm:w-64 sm:border-r md:w-80">
+				{isLoading ? (
+					<Loading />
+				) : (
+					<>
+						<div className="flex items-center gap-2 p-2 shadow">
+							<strong className="text-sm">Sort By:</strong>
+							<div
+								className="grid flex-1 grid-cols-2 gap-2 rounded bg-primary p-1"
+								onChange={handleSort}
+							>
+								<div>
+									<input
+										type="radio"
+										name="sort-by-input"
+										id="sort-by-date-option"
+										value="date"
+										className="peer hidden"
+										defaultChecked
+									/>
+									<label
+										htmlFor="sort-by-date-option"
+										className="block cursor-pointer select-none rounded p-1 text-center text-sm peer-checked:bg-blue-500 peer-checked:font-bold peer-checked:text-white"
+									>
+										Date
+									</label>
+								</div>
 
-									<div>
-										<input
-											type="radio"
-											name="sort-by-input"
-											id="sort-by-clicks-option"
-											value="clicks"
-											className="peer hidden"
-										/>
-										<label
-											htmlFor="sort-by-clicks-option"
-											className="block cursor-pointer select-none rounded p-1 text-center text-sm peer-checked:bg-blue-500 peer-checked:font-bold peer-checked:text-white"
-										>
-											Clicks
-										</label>
-									</div>
+								<div>
+									<input
+										type="radio"
+										name="sort-by-input"
+										id="sort-by-clicks-option"
+										value="clicks"
+										className="peer hidden"
+									/>
+									<label
+										htmlFor="sort-by-clicks-option"
+										className="block cursor-pointer select-none rounded p-1 text-center text-sm peer-checked:bg-blue-500 peer-checked:font-bold peer-checked:text-white"
+									>
+										Clicks
+									</label>
 								</div>
 							</div>
+						</div>
 
+						<div className="overflow-y-scroll">
 							{data.map((url) => {
 								return (
 									<button
@@ -149,7 +148,9 @@ export default function App({ children }) {
 															fontSize: "0.9rem",
 														}}
 													/>
-													{url.clicks}
+													{url.clicks
+														? url.clicks
+														: 0}
 												</span>
 											</span>
 
@@ -169,18 +170,18 @@ export default function App({ children }) {
 									</button>
 								);
 							})}
-						</>
-					)}
-				</div>
+						</div>
+					</>
+				)}
+			</div>
 
-				<div
-					className={`fixed left-0 top-0  h-full w-full bg-white dark:bg-primary sm:relative sm:flex-1 
+			<div
+				className={`fixed left-0 top-0  h-full w-full bg-white dark:bg-primary sm:relative sm:flex-1 
 					${segment ? "" : "hidden sm:block"}`}
-				>
-					{children}
-					{/* <Suspense fallback={<Loading />}></Suspense> */}
-				</div>
-			</main>
-		</SideBarLinkContextProvider>
+			>
+				{children}
+				{/* <Suspense fallback={<Loading />}></Suspense> */}
+			</div>
+		</main>
 	);
 }

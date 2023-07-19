@@ -1,6 +1,10 @@
 "use client";
-export default async function App() {
-	return <div>Select Url to View details</div>;
+export default function App() {
+	return (
+		<div className="flex h-full w-full items-center justify-center">
+			Select Url to View details
+		</div>
+	);
 }
 
 // "use client";

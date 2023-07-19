@@ -1,9 +1,9 @@
 "use client";
 
 import DoughnutChart from "@/components/DoughnutChart";
+import Loading from "@/components/Loading";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import Loading from "../../loading";
 
 export default function UrlDetails() {
 	const params = useParams();
@@ -58,16 +58,18 @@ export default function UrlDetails() {
 	}, [activeUrlData]);
 
 	return (
-		<>
+		<div
+			className={` h-full w-full p-2 dark:text-white ${
+				isLoading ? "" : "grid grid-cols-1 gap-4 lg:grid-cols-2"
+			}`}
+		>
 			{isLoading ? (
 				<Loading />
 			) : (
-				<div className="grid w-full grid-cols-1 gap-4 p-2 dark:text-white lg:grid-cols-2">
-					<div className="container relative aspect-square rounded-lg p-2 shadow-lg dark:bg-secondary">
-						<DoughnutChart data={locationData} />
-					</div>
+				<div className="container relative aspect-square rounded-lg p-2 shadow-lg dark:bg-secondary">
+					<DoughnutChart data={locationData} />
 				</div>
 			)}
-		</>
+		</div>
 	);
 }

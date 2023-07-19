@@ -1,10 +1,10 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
-import Loading from "../loading";
+import { useEffect, useState } from "react";
 import { useRouter, useSelectedLayoutSegment } from "next/navigation";
+import Loading from "@/components/Loading";
 
-export default async function App({ children }) {
+export default function App({ children }) {
 	const router = useRouter();
 	const segment = useSelectedLayoutSegment();
 
@@ -17,9 +17,10 @@ export default async function App({ children }) {
 		const res = await fetch("/api/urls");
 
 		if (res.ok) {
-			const data = await res.json();
-			console.log(data);
-			setData(() => data.data);
+			const userData = await res.json();
+			console.log(userData);
+
+			setData(() => userData.data);
 			setIsLoading(() => false);
 		}
 	}
@@ -76,7 +77,8 @@ export default async function App({ children }) {
 			</div>
 
 			<div className="w-full flex-1">
-				<Suspense fallback={<Loading />}>{children}</Suspense>
+				{children}
+				{/* <Suspense fallback={<Loading />}></Suspense> */}
 			</div>
 		</main>
 	);

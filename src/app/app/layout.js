@@ -2,20 +2,22 @@
 
 import Nav from "@/layout/Nav";
 import SideBar from "@/layout/SideBar";
-import { Suspense, useEffect, useState } from "react";
-import Loading from "./loading";
+import { useEffect, useState } from "react";
 import NewUrlModalForm from "@/components/NewUrlModalForm";
 
 export default function AppLayout({ children }) {
-	const [sideBarIsOpen, setSideBarIsOpen] = useState(
-		window.innerWidth < 1000 ? false : true,
-	);
+	const [sideBarIsOpen, setSideBarIsOpen] = useState(true);
 
 	useEffect(() => {
-		window.addEventListener("resize", () => {
-			setSideBarIsOpen(() => (window.innerWidth < 1200 ? false : true));
-		});
+		setSideBarIsOpen(() => (window.innerWidth < 1200 ? false : true));
+		window.addEventListener("resize", handleWindowResize);
+		return () => {
+			window.removeEventListener("resize", handleWindowResize);
+		};
 	}, []);
+	function handleWindowResize() {
+		setSideBarIsOpen(() => (window.innerWidth < 1200 ? false : true));
+	}
 
 	const [newUrlModalOpen, setNewUrlModalOpen] = useState(false);
 	function toggleNewUrlModal() {
@@ -33,7 +35,8 @@ export default function AppLayout({ children }) {
 			<div className="flex h-screen flex-1 flex-col">
 				<Nav />
 				<div className="h-full flex-1 border-b dark:text-white">
-					<Suspense fallback={<Loading />}>{children}</Suspense>
+					{/* <Suspense fallback={<Loading />}></Suspense> */}
+					{children}
 				</div>
 			</div>
 			<NewUrlModalForm

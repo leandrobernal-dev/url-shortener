@@ -2,7 +2,7 @@
 
 import DoughnutChart from "@/components/DoughnutChart";
 import Loading from "@/components/Loading";
-import { Close } from "@mui/icons-material";
+import { Close, Info } from "@mui/icons-material";
 import { useParams, useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { SelectedLinkContext } from "../layout";
@@ -65,7 +65,10 @@ export default function UrlDetails() {
 	return (
 		<div className="h-full w-full">
 			<div className="flex h-14 items-center justify-between border-b px-2 shadow dark:border-border dark:bg-secondary sm:hidden">
-				<h1>Link Details</h1>
+				<h1 className="flex items-center gap-1">
+					<Info fontSize="small" />
+					DETAILS
+				</h1>
 				<button
 					type="button"
 					onClick={() => {

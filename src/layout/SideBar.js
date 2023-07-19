@@ -10,7 +10,12 @@ import AddIcon from "@mui/icons-material/Add";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function SideBar({ isOpen, setIsOpen, toggleNewUrlModalForm }) {
+export default function SideBar({
+	isOpen,
+	setIsOpen,
+	toggleNewUrlModalForm,
+	handleSideBarToggle,
+}) {
 	const [activeNav, setActiveNav] = useState("/app");
 
 	const router = useRouter();
@@ -63,6 +68,7 @@ export default function SideBar({ isOpen, setIsOpen, toggleNewUrlModalForm }) {
 									: ""
 							} relative z-10 flex h-full  w-full items-center gap-1 rounded-sm p-2 hover:bg-primary/70`}
 							onClick={() => {
+								handleSideBarToggle();
 								router.push(link.href);
 								setActiveNav(() => link.href);
 							}}

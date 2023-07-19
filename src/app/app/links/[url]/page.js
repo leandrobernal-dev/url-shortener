@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 
 export default function UrlDetails() {
 	const params = useParams();
-	const urlId = String(params.id);
+	const urlId = String(params.url);
 
 	const [isLoading, setIsLoading] = useState(true);
 

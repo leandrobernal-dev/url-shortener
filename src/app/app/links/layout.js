@@ -84,7 +84,8 @@ export default function App({ children }) {
 				</div>
 
 				<div
-					className={`fixed left-0 top-0 hidden h-full w-full bg-white dark:bg-primary sm:relative sm:block sm:flex-1`}
+					className={`fixed left-0 top-0  h-full w-full bg-white dark:bg-primary sm:relative sm:flex-1 
+					${segment ? "" : "hidden sm:block"}`}
 				>
 					{children}
 					{/* <Suspense fallback={<Loading />}></Suspense> */}

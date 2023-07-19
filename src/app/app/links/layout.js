@@ -56,7 +56,7 @@ export default function App({ children }) {
 						<Loading />
 					) : (
 						<>
-							<div className="flex items-center gap-2 px-2">
+							<div className="flex items-center gap-2 p-2 shadow">
 								<strong className="text-sm">Sort By:</strong>
 								<div
 									className="grid flex-1 grid-cols-2 gap-2 rounded bg-primary p-1"

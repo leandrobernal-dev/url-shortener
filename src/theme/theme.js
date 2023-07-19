@@ -27,6 +27,14 @@ const theme = extendTheme({
         display: "'Inter', var(--joy-fontFamily-fallback)",
         body: "'Inter', var(--joy-fontFamily-fallback)",
     },
+    components: {
+        JoyIconButton: {
+            defaultProps: {
+                variant: "solid",
+                color: "primary",
+            },
+        },
+    },
     // colorSchemes: {
     //     light: {
     //         palette: {},

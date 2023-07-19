@@ -5,14 +5,14 @@ import Loading from "@/components/Loading";
 import { Close, Info } from "@mui/icons-material";
 import { useParams, useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
-import { SelectedLinkContext } from "@/context/SideBarLinkContextProvider";
+import { UserDataContext } from "@/context/UserDataContext";
 
 export default function UrlDetails() {
 	const router = useRouter();
 	const params = useParams();
 	const urlId = String(params.url);
 
-	const { activeLink, setActiveLink } = useContext(SelectedLinkContext);
+	const { activeLink, data, setActiveLink } = useContext(UserDataContext);
 
 	const [isLoading, setIsLoading] = useState(true);
 

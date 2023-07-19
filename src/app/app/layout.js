@@ -5,9 +5,13 @@ import SideBar from "@/layout/SideBar";
 import { Suspense, useEffect, useState } from "react";
 import NewUrlModalForm from "@/components/NewUrlModalForm";
 import Loading from "@/components/Loading";
+import UserDataContextProvider from "@/context/UserDataContext";
 
 export default function AppLayout({ children }) {
 	const [sideBarIsOpen, setSideBarIsOpen] = useState(true);
+
+	const [data, setData] = useState([]);
+	const [activeLink, setActiveLink] = useState("");
 
 	useEffect(() => {
 		setSideBarIsOpen(() => (window.innerWidth < 1280 ? false : true));
@@ -27,25 +31,29 @@ export default function AppLayout({ children }) {
 	}
 
 	return (
-		<div className={`flex h-screen`}>
-			<SideBar
-				handleSideBarToggle={handleSideBarToggle}
-				toggleNewUrlModalForm={toggleNewUrlModal}
-				isOpen={sideBarIsOpen}
-				setIsOpen={setSideBarIsOpen}
-			/>
+		<UserDataContextProvider
+			value={{ activeLink, setActiveLink, data, setData }}
+		>
+			<div className={`flex h-screen`}>
+				<SideBar
+					handleSideBarToggle={handleSideBarToggle}
+					toggleNewUrlModalForm={toggleNewUrlModal}
+					isOpen={sideBarIsOpen}
+					setIsOpen={setSideBarIsOpen}
+				/>
 
-			<div className="z-0 flex h-screen flex-1 flex-col">
-				<Nav setIsOpen={setSideBarIsOpen} />
-				<div className="h-full flex-1 border-b dark:text-white">
-					<Suspense fallback={<Loading />}>{children}</Suspense>
+				<div className="z-0 flex h-screen flex-1 flex-col overflow-hidden">
+					<Nav setIsOpen={setSideBarIsOpen} />
+					<div className="h-full flex-1 border-b dark:text-white">
+						<Suspense fallback={<Loading />}>{children}</Suspense>
+					</div>
 				</div>
-			</div>
 
-			<NewUrlModalForm
-				open={newUrlModalOpen}
-				setOpen={toggleNewUrlModal}
-			/>
-		</div>
+				<NewUrlModalForm
+					open={newUrlModalOpen}
+					setOpen={toggleNewUrlModal}
+				/>
+			</div>
+		</UserDataContextProvider>
 	);
 }

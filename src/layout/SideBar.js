@@ -1,4 +1,11 @@
-import { Add, Apps, LinkRounded, Menu, QrCode } from "@mui/icons-material";
+import {
+	Add,
+	Apps,
+	Close,
+	LinkRounded,
+	Menu,
+	QrCode,
+} from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -23,16 +30,17 @@ export default function SideBar({ isOpen, setIsOpen, toggleNewUrlModalForm }) {
 	];
 	return (
 		<div
-			className={`h-full border-r  border-border bg-secondary px-2 text-white shadow-md ${
-				isOpen ? "w-64 " : "w-14"
-			}`}
+			className={`fixed left-0  top-0 z-10 h-full w-full bg-secondary px-2 text-white shadow-md md:relative md:border-r md:border-border 
+				${isOpen ? "" : "hidden md:block"} 
+				md:${isOpen ? "w-64" : "w-14"}`}
 		>
-			<div className=" hidden h-14 items-center md:flex">
+			<div className="flex h-14 items-center">
 				<button
 					className="p-2"
 					onClick={() => setIsOpen((prevState) => !prevState)}
 				>
-					<Menu />
+					<Menu className="hidden md:block" />
+					<Close className="block md:hidden" />
 				</button>
 			</div>
 			<button
@@ -64,8 +72,8 @@ export default function SideBar({ isOpen, setIsOpen, toggleNewUrlModalForm }) {
 								className={`${
 									isOpen
 										? ""
-										: "absolute left-full ml-4 hidden w-fit whitespace-nowrap rounded-sm bg-slate-300 p-1 text-black shadow-md group-hover:block"
-								}  origin-left transition-all ease-in-out `}
+										: "whitespace-nowrap rounded-sm p-1 md:absolute md:left-full md:ml-4 md:hidden md:bg-slate-300 md:text-black md:shadow-md md:group-hover:block"
+								}  origin-left`}
 							>
 								{link.name}
 							</span>

@@ -17,7 +17,7 @@ export default function AppLayout({ children }) {
 		};
 	}, []);
 	function handleWindowResize() {
-		setSideBarIsOpen(() => (window.innerWidth < 1200 ? false : true));
+		setSideBarIsOpen(() => (window.innerWidth < 1280 ? false : true));
 	}
 
 	const [newUrlModalOpen, setNewUrlModalOpen] = useState(false);
@@ -33,8 +33,8 @@ export default function AppLayout({ children }) {
 				setIsOpen={setSideBarIsOpen}
 			/>
 
-			<div className="flex h-screen flex-1 flex-col">
-				<Nav />
+			<div className="z-0 flex h-screen flex-1 flex-col">
+				<Nav setIsOpen={setSideBarIsOpen} />
 				<div className="h-full flex-1 border-b dark:text-white">
 					<Suspense fallback={<Loading />}>{children}</Suspense>
 				</div>

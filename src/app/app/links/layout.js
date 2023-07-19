@@ -32,7 +32,7 @@ export default function App({ children }) {
 	}, []);
 
 	return (
-		<main className="m-0 flex h-full w-full dark:text-white">
+		<main className="flex h-full w-full dark:text-white">
 			<div className="flex w-64 flex-col gap-3 border-r p-1 shadow dark:border-border dark:bg-tertiary">
 				{isLoading ? (
 					<Loading />

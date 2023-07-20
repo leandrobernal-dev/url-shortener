@@ -180,8 +180,10 @@ export default function App({ children }) {
 			</div>
 
 			<div
-				className={`fixed bottom-0 left-0 top-0 z-30 h-full w-full bg-white pl-0 dark:bg-primary sm:z-0 sm:pl-80
-					${segment ? "" : "hidden sm:block"}`}
+				className={`fixed bottom-0 left-0 top-0 z-30 h-full w-full bg-white pl-0 dark:bg-primary sm:top-14 sm:z-0 sm:pl-80
+					${segment ? "" : "hidden sm:block"}
+					${sideBarIsOpen ? "md:left-[376px] xl:left-64" : "md:left-14"}
+					`}
 			>
 				{children}
 				{/* <Suspense fallback={<Loading />}></Suspense> */}

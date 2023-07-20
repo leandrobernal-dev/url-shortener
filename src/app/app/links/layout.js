@@ -48,8 +48,8 @@ export default function App({ children }) {
 	}, []);
 
 	return (
-		<main className="flex h-full w-full dark:text-white">
-			<div className="flex h-full w-full flex-col gap-3 p-2 shadow dark:border-border dark:bg-tertiary sm:w-64 sm:border-r md:w-80">
+		<main className="h-full w-full dark:text-white">
+			<div className="fixed bottom-0 left-0 top-14 z-10 flex w-full  flex-col gap-3 py-2 pr-1  shadow dark:border-border dark:bg-tertiary sm:w-80 sm:border-r md:left-14 xl:left-64">
 				{isLoading ? (
 					<Loading />
 				) : (
@@ -95,7 +95,7 @@ export default function App({ children }) {
 							</div>
 						</div>
 
-						<div className="overflow-y-scroll">
+						<div className=" small-scrollbar flex h-full flex-col gap-2 overflow-y-scroll px-2">
 							{data.map((url) => {
 								return (
 									<button
@@ -106,7 +106,7 @@ export default function App({ children }) {
 												`/app/links/${url.shortenedUrl}`,
 											);
 										}}
-										className={` relative flex rounded p-2 shadow hover:bg-primary/80 hover:text-white dark:text-white dark:hover:bg-primary ${
+										className={`relative flex w-full rounded p-2 shadow hover:bg-primary/80 hover:text-white dark:text-white dark:hover:bg-primary ${
 											segment === url.shortenedUrl
 												? "bg-primary/80 text-white shadow-lg dark:bg-primary"
 												: ""
@@ -176,7 +176,7 @@ export default function App({ children }) {
 			</div>
 
 			<div
-				className={`fixed left-0 top-0  h-full w-full bg-white dark:bg-primary sm:relative sm:flex-1 
+				className={`fixed bottom-0 left-0 top-0 z-30 h-full w-full bg-white pl-0 dark:bg-primary sm:z-0 sm:pl-80
 					${segment ? "" : "hidden sm:block"}`}
 			>
 				{children}

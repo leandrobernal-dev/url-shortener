@@ -14,3 +14,24 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
+
+/* width */
+.small-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+.small-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+.small-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+.small-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

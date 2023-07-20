@@ -105,7 +105,7 @@ export default function NewUrlModalForm({ open, setOpen }) {
 							setOpen();
 					}}
 					aria-label="modal-overlay"
-					className="fixed left-0 top-0 flex h-full w-full items-center justify-center bg-black/70 shadow-lg backdrop-blur-sm"
+					className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-black/70 shadow-lg backdrop-blur-sm"
 				>
 					<form
 						onSubmit={handleNewUrlSubmit}

@@ -48,7 +48,11 @@ export default function App({ children }) {
 	}, []);
 
 	return (
-		<main className="h-full w-full dark:text-white">
+		<main
+			className={`h-full w-full dark:text-white sm:pl-80
+		${sideBarIsOpen ? "md:left-[376px] xl:left-64" : "md:left-14"}
+		`}
+		>
 			<div
 				className={`fixed bottom-0 left-0 top-14 z-10 flex w-full  flex-col gap-3 py-2 pr-1  shadow dark:border-border dark:bg-tertiary sm:w-80 sm:border-r
 				${sideBarIsOpen ? "md:left-14 xl:left-64" : "md:left-14"}
@@ -180,9 +184,9 @@ export default function App({ children }) {
 			</div>
 
 			<div
-				className={`fixed bottom-0 left-0 top-0 z-30 h-full w-full bg-white pl-0 dark:bg-primary sm:top-14 sm:z-0 sm:pl-80
+				className={`fixed bottom-0 left-0 top-0 z-30 w-full bg-white pl-0 dark:bg-primary sm:relative sm:z-0
 					${segment ? "" : "hidden sm:block"}
-					${sideBarIsOpen ? "md:left-[376px] xl:left-64" : "md:left-14"}
+					
 					`}
 			>
 				{children}

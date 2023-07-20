@@ -60,7 +60,7 @@ export default function AppLayout({ children }) {
 						height={navHeight}
 						setIsOpen={setSideBarIsOpen}
 					/>
-					<div className={`border-b dark:text-white`}>
+					<div className={`dark:text-white`}>
 						<Suspense fallback={<Loading />}>{children}</Suspense>
 					</div>
 				</div>

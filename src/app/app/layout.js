@@ -38,7 +38,7 @@ export default function AppLayout({ children }) {
 
 	return (
 		<UserDataContextProvider
-			value={{ activeLink, setActiveLink, data, setData }}
+			value={{ activeLink, setActiveLink, data, setData, sideBarIsOpen }}
 		>
 			<div
 				className={`pl-0 pt-14

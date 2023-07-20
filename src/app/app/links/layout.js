@@ -10,7 +10,7 @@ export default function App({ children }) {
 	const router = useRouter();
 	const segment = useSelectedLayoutSegment();
 
-	const { activeLink, setActiveLink, data, setData } =
+	const { activeLink, setActiveLink, data, setData, sideBarIsOpen } =
 		useContext(UserDataContext);
 	const [isLoading, setIsLoading] = useState(true);
 
@@ -49,7 +49,11 @@ export default function App({ children }) {
 
 	return (
 		<main className="h-full w-full dark:text-white">
-			<div className="fixed bottom-0 left-0 top-14 z-10 flex w-full  flex-col gap-3 py-2 pr-1  shadow dark:border-border dark:bg-tertiary sm:w-80 sm:border-r md:left-14 xl:left-64">
+			<div
+				className={`fixed bottom-0 left-0 top-14 z-10 flex w-full  flex-col gap-3 py-2 pr-1  shadow dark:border-border dark:bg-tertiary sm:w-80 sm:border-r
+				${sideBarIsOpen ? "md:left-14 xl:left-64" : "md:left-14"}
+			`}
+			>
 				{isLoading ? (
 					<Loading />
 				) : (

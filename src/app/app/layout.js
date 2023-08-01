@@ -10,7 +10,7 @@ import UserDataContextProvider from "@/context/UserDataContext";
 export default function AppLayout({ children }) {
 	const [sideBarIsOpen, setSideBarIsOpen] = useState(true);
 
-	const [data, setData] = useState([]);
+	const [data, setData] = useState({});
 	const [activeLink, setActiveLink] = useState("");
 
 	useEffect(() => {

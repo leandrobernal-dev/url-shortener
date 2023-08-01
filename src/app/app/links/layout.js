@@ -184,7 +184,7 @@ export default function App({ children }) {
 			</div>
 
 			<div
-				className={`fixed bottom-0 left-0 top-0 z-30 w-full bg-white pl-0 dark:bg-primary sm:relative sm:z-0
+				className={`small-scrollbar fixed bottom-0 left-0 top-0 z-30 h-screen w-full overflow-y-scroll bg-white pb-10  pl-0 dark:bg-primary sm:relative sm:z-0
 					${segment ? "" : "hidden sm:block"}
 					
 					`}

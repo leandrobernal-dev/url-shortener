@@ -23,7 +23,7 @@ export default async function RootLayout({ children, Session }) {
 			}`}
 		>
 			<body
-				className={`${inter.className} dark:bg-primary`}
+				className={`${inter.className} overflow-hidden dark:bg-primary`}
 				suppressHydrationWarning={true}
 			>
 				<AuthProvider session={Session}>{children}</AuthProvider>
